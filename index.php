@@ -78,7 +78,7 @@ require_once "pre_button_logic.php";
                     <p class="old_message">Laba diena!</p> 
                 </div> -->
 
-            </section>
+            <!-- </section>  this section is in the load_messages.php -->
 
         </main>
     </body>

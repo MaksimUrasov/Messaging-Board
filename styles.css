@@ -61,3 +61,12 @@ p{
     font-weight: bold;
 }
 
+.pages_container{
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.pages_container > a {
+    padding: 0.2vw;
+}

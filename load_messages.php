@@ -1,6 +1,6 @@
 <?php
 $number_of_posts_per_page = 10;
-$page_to_show = $_SESSION["page_to_show"] = 1;
+$page_to_show = $_GET["page"] ?: 1;
 $calculate_offset = $page_to_show * $number_of_posts_per_page - $number_of_posts_per_page;
 
 // connect to DB
@@ -63,10 +63,12 @@ $amount_of_pages = ceil($amount_of_entries / $number_of_posts_per_page);
 function create_page_links(){
     global $amount_of_pages;
 
-    echo "<div class='pages_container'>";
+    echo "</section><div class='pages_container'>";
     
     for ($i = 1; $i <= $amount_of_pages; $i++) {
-        echo "<p>$i</p>";
+        echo "<a href='http://message.vienasmedis.lt/index.php?page=$i'>$i</a>";
+
+        
     }
      
     echo "</div>";
