@@ -1,0 +1,30 @@
+body {
+    color: rgb(90, 56, 6);
+    width: 100%;
+    
+}
+.content {
+    background-color: bisque;
+    width: 300px;
+    margin: auto;
+    padding: 0.1vw 3vw 3vw 3vw;
+}
+.welcome {
+    text-align: center;
+}
+.input {
+    width: 100%;
+    margin: auto;
+}
+
+.mandatory_notice, .error_message {
+    font-size: small;
+}
+
+.server_error_message {
+    color:red;
+}
+
+.server_success_message{
+    color:green;
+}
