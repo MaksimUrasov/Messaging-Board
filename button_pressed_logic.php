@@ -18,11 +18,11 @@ function test_input($data) {
 };
 
       
-$_SESSION['first_name']= test_input($_POST["first_name"]);
-$_SESSION['last_name']= test_input($_POST["last_name"]);
-$_SESSION['birth']= test_input($_POST["birth"]);
-$_SESSION['email']= test_input($_POST["email"]);
-$_SESSION['message']= test_input($_POST["message"]);
+$first_name = $_SESSION['first_name']= test_input($_POST["first_name"]);
+$last_name = $_SESSION['last_name']= test_input($_POST["last_name"]);
+$birth = $_SESSION['birth']= test_input($_POST["birth"]);
+$email = $_SESSION['email']= test_input($_POST["email"]);
+$message = $_SESSION['message']= test_input($_POST["message"]);
 
 
 function validate_and_save_errors_to_session(){
@@ -64,23 +64,54 @@ function validate_and_save_errors_to_session(){
 
 validate_and_save_errors_to_session();
 
-function check_where_to_redirect_and_redirect(){
+function return_or_send_to_DB(){
     foreach($_SESSION as $key => $value ){
         if(str_contains($key, "err")) {
-            redirect("index.php");
+            header("Location: index.php");
+            exit();
             // echo "<br> $key";
         } 
     }
-    // print_r($_SESSION);
-    // echo "<br>  no errors";
-    redirect("save_to_DB.php");
+
+    global $first_name, $last_name, $birth, $email, $message;
+    $name = $first_name." ".$last_name;
+    $email = $email ?: NULL;    
+    
+    // connect to DB
+    $servername = "localhost";
+    $username = "viedis_root";
+    $password = "barinme55ageb0ard";
+    $dbname = "viedis_messageboard";
+    
+    // $conn = new mysqli($servername, $username, $password, $dbname);
+    // if ($conn -> connect_error){
+    //     die("Connection failed:" . $conn->connect_error);
+    // }
+    // echo "connected succesfully". "<br>";
+    
+    // // insert row into table
+    // $sql = "INSERT INTO Posts (id, name, birth_date, email, message)
+    // VALUES (NULL, '${name}', '${birth}', '${email}', '${message}');";
+    
+    // if ($conn->query($sql) === TRUE) {
+    //      // $last_id = $conn->insert_id;
+    //      // echo "New record created successfully." 
+    //         $_SESSION['DB_updated']="Your message has been saved. Thank you!";
+    // } else {
+    //     $_SESSION["DB_error"] = "DB Error: " . $sql . "<br>" . $conn->error;
+    //     // echo "DB Error: " . $sql . "<br>" . $conn->error;
+    // }
+    
+    // $conn->close();
+    
+    // header("Location: index.php");
+    // exit;
+
+    echo "message sent to DB";
+
+
 }
 
+return_or_send_to_DB();
 
-function redirect($file){
-    header("Location: $file");
-    exit;
-};
-
-
-check_where_to_redirect_and_redirect();
+// header("Location: index.php");

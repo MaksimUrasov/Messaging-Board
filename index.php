@@ -20,7 +20,7 @@ require_once "pre_button_logic.php";
             <h1 class="welcome">Welcome!</h1>
             <p class="welcome">Here you can leave a message for our team</p>
             
-            <form  method="post"  action="/after_button_logic.php" onsubmit="JSActions()" >  
+            <form  method="post"  action="/button_pressed_logic.php" onsubmit="JSActions()" >  
                 
                 <input type="text" name="first_name" value="<?php check_session_keys("first_name")?>" placeholder="First name" class="input first_name"  required>
                 <div class="error_message first_name_err">* <?php check_session_keys("first_name_err")?></div><br>
@@ -53,14 +53,22 @@ require_once "pre_button_logic.php";
                 <?php
                 require_once "load_messages.php";
                 ?>
-
-                <br>
                 <div class='container_for_one_old_message'>
-                    <div class="old_name">Darius Kaimynas, </div> 
-                    <div class="old_age">30 years</div> 
-                    <br>
-                    <div class="old_message">Laba diena!</div> 
+                    <div class="name_and_year_container">
+                        <p class="old_name">Darius Kaimynas</p> 
+                        <p class="old_age">31 years</p> 
+                    </div>
+                    <p class="old_message">Laba diena!</p> 
                 </div>
+
+                <div class='container_for_one_old_message'>
+                    <div class="name_and_year_container">
+                        <p class="old_name">Darius Kaimynas</p> 
+                        <p class="old_age">32 years</p> 
+                    </div>
+                    <p class="old_message">Laba diena!</p> 
+                </div>
+
             </section>
 
         </main>

@@ -1,14 +1,26 @@
+:root {
+    --dark_brown: rgb(90, 56, 6);
+    --light_brown: #fff3e6
+    /* --white: #ffffff; */
+  }
+
 body {
-    color: rgb(90, 56, 6);
+    color: var(--dark_brown);
     width: 100%;
     
 }
+
 .content {
     background-color: bisque;
     width: 300px;
     margin: auto;
     padding: 0.1vw 3vw 3vw 3vw;
 }
+
+p{
+    margin:0;
+}
+
 .welcome {
     text-align: center;
 }
@@ -27,4 +39,16 @@ body {
 
 .server_success_message{
     color:green;
+}
+
+.container_for_old_messages{
+    border:var(--dark_brown) 1px solid;
+    margin-top: 1vw;
+    
+}
+
+.container_for_one_old_message:nth-child(odd) {background-color: var(--light_brown);}
+
+.name_and_year_container{
+    display: flex;
 }

@@ -89,25 +89,3 @@ function add_css_complete($field){
     </style>";
 };
 
-
-
-// function show_DB_ok(){  //this function is called in a div under the button.
-//     if(array_key_exists("DB_updated",$_SESSION)){
-//         echo "<br>" . $_SESSION["DB_updated"]; 
-//         // global $server_message_ok;
-//         // $server_message_ok = $_SESSION["DB_updated"];
-
-
-//     }
-// }
-
-
-
-
-// caclulate the year:
-
-// $dob = new DateTime($_SESSION["birth"]);
-
-// $now = new DateTime();
-// $age = $now->diff($dob); 
-
