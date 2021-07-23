@@ -83,29 +83,29 @@ function return_or_send_to_DB(){
     $password = "barinme55ageb0ard";
     $dbname = "viedis_messageboard";
     
-    // $conn = new mysqli($servername, $username, $password, $dbname);
-    // if ($conn -> connect_error){
-    //     die("Connection failed:" . $conn->connect_error);
-    // }
-    // echo "connected succesfully". "<br>";
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    if ($conn -> connect_error){
+        die("Connection failed:" . $conn->connect_error);
+    }
+    echo "connected succesfully". "<br>";
     
-    // // insert row into table
-    // $sql = "INSERT INTO Posts (id, name, birth_date, email, message)
-    // VALUES (NULL, '${name}', '${birth}', '${email}', '${message}');";
+    // insert row into table
+    $sql = "INSERT INTO Posts (id, name, birth_date, email, message)
+    VALUES (NULL, '${name}', '${birth}', '${email}', '${message}');";
     
-    // if ($conn->query($sql) === TRUE) {
-    //      // $last_id = $conn->insert_id;
-    //      // echo "New record created successfully." 
-    //         $_SESSION['DB_updated']="Your message has been saved. Thank you!";
-    // } else {
-    //     $_SESSION["DB_error"] = "DB Error: " . $sql . "<br>" . $conn->error;
-    //     // echo "DB Error: " . $sql . "<br>" . $conn->error;
-    // }
+    if ($conn->query($sql) === TRUE) {
+         // $last_id = $conn->insert_id;
+         // echo "New record created successfully." 
+            $_SESSION['DB_updated']="Your message has been saved. Thank you!";
+    } else {
+        $_SESSION["DB_error"] = "DB Error: " . $sql . "<br>" . $conn->error;
+        // echo "DB Error: " . $sql . "<br>" . $conn->error;
+    }
     
-    // $conn->close();
+    $conn->close();
     
-    // header("Location: index.php");
-    // exit;
+    header("Location: index.php");
+    exit;
 
     echo "message sent to DB";
 
@@ -113,5 +113,3 @@ function return_or_send_to_DB(){
 }
 
 return_or_send_to_DB();
-
-// header("Location: index.php");

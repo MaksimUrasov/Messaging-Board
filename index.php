@@ -49,11 +49,12 @@ require_once "pre_button_logic.php";
             <button onclick="JSActions()" >test JS</button> 
             <!-- <button onclick="window.localStorage.clear();location.reload();">clear all fields</button>  -->
 
-            <section class="container_for_old_messages">Message history
+            <section class="container_for_old_messages">
+                <p class="message_container_name">Message history</p>
                 <?php
                 require_once "load_messages.php";
                 ?>
-                <div class='container_for_one_old_message'>
+                <!-- <div class='container_for_one_old_message'>
                     <div class="name_and_year_container">
                         <p class="old_name">Darius Kaimynas</p> 
                         <p class="old_age">31 years</p> 
@@ -68,6 +69,14 @@ require_once "pre_button_logic.php";
                     </div>
                     <p class="old_message">Laba diena!</p> 
                 </div>
+
+                <div class='container_for_one_old_message'>
+                    <div class="name_and_year_container">
+                        <p class="old_name">Darius Kaimynas</p> 
+                        <p class="old_age">33 years</p> 
+                    </div>
+                    <p class="old_message">Laba diena!</p> 
+                </div> -->
 
             </section>
 
