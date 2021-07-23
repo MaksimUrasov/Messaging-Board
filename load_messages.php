@@ -49,13 +49,14 @@ echo "There are no messages yet";
 
 // download number of entries in table
 
-$sql2 = "SELECT COUNT(*) FROM Posts";
+$sql2 = "SELECT * FROM Posts";
 $result2 = $conn->query($sql2);
 
 if ($result2) { 
     global $amount_of_entries;
     $amount_of_entries = mysqli_num_rows($result2); 
-    mysqli_free_result($result); 
+    // var_dump($result2);
+    mysqli_free_result($result2); 
 } 
 
 // finish the connection
