@@ -104,6 +104,21 @@ function return_or_send_to_DB(){
         echo $sql . "<br>" . $e->getMessage();
     }
 
+    // try {
+    //     $sql = $conn->prepare("INSERT INTO Posts (id, name, birth_date, email, message)
+    //     VALUES (NULL, :name, :birth_date, :email, :message)");
+
+    //     $sql->bindParam(':name', $name);
+    //     $sql->bindParam(':birth', $birth);
+    //     $sql->bindParam(':email', $email);
+    //     $sql->bindParam(':message', $message);
+
+    //     $sql->execute();
+
+    // } catch(PDOException $e) {
+    //     // echo $sql . "<br>" . $e->getMessage();
+    //     echo "Error: " . $e->getMessage();
+    // }
 
     $conn = null;
     

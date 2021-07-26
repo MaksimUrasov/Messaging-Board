@@ -13,7 +13,7 @@ function set_variable_page_to_show() {
 };
 set_variable_page_to_show();
 
-$calculate_offset = $page_to_show * $number_of_posts_per_page - $number_of_posts_per_page;
+$calculated_offset = $page_to_show * $number_of_posts_per_page - $number_of_posts_per_page;
 $amount_of_entries = null;
 
 
@@ -71,13 +71,15 @@ try {
 // download old messages using PDO
 try {
 
-    $stmt_one = $conn->prepare("SELECT * FROM Posts ORDER BY id DESC LIMIT $number_of_posts_per_page OFFSET $calculate_offset");
+    $stmt_one = $conn->prepare("SELECT * FROM Posts ORDER BY id DESC LIMIT $number_of_posts_per_page OFFSET $calculated_offset");
     $stmt_one->execute();
   
     foreach($stmt_one->fetchAll() as $k=>$v) {
-        $old_message = new Old_message($v["name"],$v["birth_date"],$v["message"]);
-        // $old_message->set_variables($v["name"],$v["birth_date"],$v["message"]);  // I better use __construct for to pass arguments
-        $old_message->genereate_an_html();
+        var_dump($v);
+        echo "<br>";
+        // $old_message = new Old_message($v["name"],$v["birth_date"],$v["message"]);
+        // // $old_message->set_variables($v["name"],$v["birth_date"],$v["message"]);  // I better use __construct for to pass arguments
+        // $old_message->genereate_an_html();
     }
 } catch(PDOException $e) {
     echo "Error of downloading data from DB: " . $e->getMessage();
