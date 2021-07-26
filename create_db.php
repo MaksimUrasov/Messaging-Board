@@ -1,6 +1,6 @@
 <?php
 
-// DB created in serveriai.lt UI, as long as user (!root) has no privileges to create a new table.
+// DB created in serveriai.lt grapical UI, as long as user (!root) has no privileges to create a new table.
 //connect
 
 $servername = "localhost";
@@ -14,9 +14,21 @@ if ($conn -> connect_error){
 }
 echo "connected succesfully". "<br>";
 
+try {
+  $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+  // set the PDO error mode to exception
+  $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  // echo "Connected successfully";
+} catch(PDOException $e) {
+  echo "Connection to DB failed: " . $e->getMessage();
+}
+
 // Create a table
 
-$sql = "CREATE TABLE Posts (
+
+// use exec() because no results are returned
+try {
+  $sql = "CREATE TABLE Posts (
     id INT(6) UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
     name TEXT(30) COLLATE utf8_general_ci NOT NULL,
     birth_date DATE NOT NULL,
@@ -24,11 +36,12 @@ $sql = "CREATE TABLE Posts (
     message TEXT(500) COLLATE utf8_general_ci NOT NULL
     )";
 
-if ($conn->query($sql) === TRUE) {
-    echo "Table created successfully";
-  } else {
-    echo "Error creating table: " . $conn->error;
-  }
-  
-  $conn->close();
+  $conn->exec($sql);
+  echo "Table MyGuests created successfully";
+} catch(PDOException $e) {
+  echo $sql . "<br>" . $e->getMessage();
+}
+
+
+$conn = null;
 

@@ -68,9 +68,6 @@ function apply_additional_css(){
 
 apply_additional_css();
 
-// str_contains(string $haystack, string $needle):
-
-
 function add_css_error($field){
     echo "<style type='text/css'>
     .$field {

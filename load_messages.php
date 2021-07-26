@@ -1,8 +1,53 @@
 <?php
+
+//set all necessary variables:
 $number_of_posts_per_page = 10;
-$page_to_show = $_GET["page"] ?: 1;
+
+function set_variable_page_to_show() {
+    global $page_to_show;
+    if (array_key_exists("page",$_GET)) {
+        $page_to_show = intval($_GET["page"]);
+    }else{
+        $page_to_show = 1;
+    }
+};
+set_variable_page_to_show();
+
 $calculate_offset = $page_to_show * $number_of_posts_per_page - $number_of_posts_per_page;
 $amount_of_entries = null;
+
+
+
+//set a class:
+class Old_message
+{
+    public function __construct($name, $birth_date, $message) {
+        $this->downloaded_name = $name;
+        $this->downloaded_age =  $this->convert_date_to_years_old($birth_date);
+        $this->downloaded_message = $message;  
+    }
+
+    public function genereate_an_html(){
+        echo "<div class='container_for_one_old_message'>
+        <div class='name_and_year_container'>
+        <p class='old_name'>" . $this->downloaded_name . ",&#160</p> 
+        <p class='old_age'>" . $this->downloaded_age . " years.</p> 
+        </div>
+        <p class='old_message'>" . $this->downloaded_message . "</p> 
+        </div>";
+    }
+
+    public function convert_date_to_years_old($b_date){
+        $dob = new DateTime($b_date);
+        $now = new DateTime();
+        $age = $now->diff($dob);
+        return $age->format('%y');
+    }
+
+};
+
+
+
 
 
 // connect to DB
@@ -12,71 +57,51 @@ $password = "barinme55ageb0ard";
 $dbname = "viedis_messageboard";
 
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn -> connect_error){
-    die("Connection failed:" . $conn->connect_error);
+
+try {
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    // set the PDO error mode to exception
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    // echo "Connected successfully";
+} catch(PDOException $e) {
+    echo "Connection to DB failed: " . $e->getMessage();
 }
-// echo "connected succesfully". "<br>";
 
-// download old messages
-$sql = "SELECT * FROM Posts ORDER BY id DESC LIMIT $number_of_posts_per_page OFFSET $calculate_offset";
-$result = $conn->query($sql);
 
-if ($result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
-        // var_dump($row);
-        global $last_downloaded_id;
-        $last_downloaded_id = $row["id"];
-        $downloaded_name = $row["name"];
-        $downloaded_age =  convert_date_to_years_old($row["birth_date"]);
-        $downloaded_message  = $row["message"];
-       
+// download old messages using PDO
+try {
 
-        echo "<div class='container_for_one_old_message'>
-                <div class='name_and_year_container'>
-                <p class='old_name'>$downloaded_name,&#160</p> 
-                <p class='old_age'>$downloaded_age years.</p> 
-                </div>
-                <p class='old_message'>$downloaded_message</p> 
-                </div>";
-
+    $stmt_one = $conn->prepare("SELECT * FROM Posts ORDER BY id DESC LIMIT $number_of_posts_per_page OFFSET $calculate_offset");
+    $stmt_one->execute();
+  
+    foreach($stmt_one->fetchAll() as $k=>$v) {
+        $old_message = new Old_message($v["name"],$v["birth_date"],$v["message"]);
+        // $old_message->set_variables($v["name"],$v["birth_date"],$v["message"]);  // I better use __construct for to pass arguments
+        $old_message->genereate_an_html();
     }
-    mysqli_free_result($result);
-} else {
-echo "There are no messages yet";
-};
+} catch(PDOException $e) {
+    echo "Error of downloading data from DB: " . $e->getMessage();
+}
 
 
-// download number of entries in table
 
-$sql2 = "SELECT * FROM Posts";
-$result2 = $conn->query($sql2);
+// download number of entries in DB table
 
-if ($result2) { 
-    global $amount_of_entries;
-    $amount_of_entries = mysqli_num_rows($result2); 
-    // var_dump($result2);
-    mysqli_free_result($result2); 
-} 
+try {
+    $amount_of_entries = $conn->query("SELECT count(*) FROM Posts")->fetchColumn();
+
+} catch(PDOException $e) {
+    echo "Error of downloading data from DB: " . $e->getMessage();
+}
 
 // finish the connection
-$conn->close();
+$conn = null;
 
 
-
-
-function convert_date_to_years_old($date){
-    $dob = new DateTime($date);
-    $now = new DateTime();
-    $age = $now->diff($dob);
-    return $age->format('%y');
-}
 
 
 
 //now I add pages buttons to the bottom of the message container:
-
-
 
 
 function create_page_links(){
@@ -86,11 +111,9 @@ function create_page_links(){
     echo "</section><div class='pages_container'>";
     
     for ($i = 1; $i <= $amount_of_pages; $i++) {
-        echo "<a href='http://message.vienasmedis.lt/index.php?page=$i'>$i</a>";
-
-        
+        echo "<a href='http://message.vienasmedis.lt/index.php?page=$i,tag=#messages'>$i</a>"; 
     }
-     
+
     echo "</div>";
 
 };

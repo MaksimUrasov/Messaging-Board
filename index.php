@@ -19,6 +19,7 @@ require_once "pre_button_logic.php";
         <main class="content">
             <h1 class="welcome">Welcome!</h1>
             <p class="welcome">Here you can leave a message for our team</p>
+            <br>
             
             <form  method="post"  action="/button_pressed_logic.php" onsubmit="JSActions()" >  
                 
@@ -50,7 +51,7 @@ require_once "pre_button_logic.php";
             <!-- <button onclick="window.localStorage.clear();location.reload();">clear all fields</button>  -->
 
             <section class="container_for_old_messages">
-                <p class="message_container_name">Message history</p>
+                <p class="message_container_name" id="messages" >Message history</p>
                 <?php
                 require_once "load_messages.php";
                 ?>

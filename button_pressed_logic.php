@@ -83,26 +83,29 @@ function return_or_send_to_DB(){
     $password = "barinme55ageb0ard";
     $dbname = "viedis_messageboard";
     
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    if ($conn -> connect_error){
-        die("Connection failed:" . $conn->connect_error);
+    try {
+        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+        // set the PDO error mode to exception
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        // echo "Connected successfully";
+    } catch(PDOException $e) {
+        echo "Connection to DB failed: " . $e->getMessage();
     }
-    echo "connected succesfully". "<br>";
     
     // insert row into table
-    $sql = "INSERT INTO Posts (id, name, birth_date, email, message)
-    VALUES (NULL, '${name}', '${birth}', '${email}', '${message}');";
-    
-    if ($conn->query($sql) === TRUE) {
-         // $last_id = $conn->insert_id;
-         // echo "New record created successfully." 
-            $_SESSION['DB_updated']="Your message has been saved. Thank you!";
-    } else {
-        $_SESSION["DB_error"] = "DB Error: " . $sql . "<br>" . $conn->error;
-        // echo "DB Error: " . $sql . "<br>" . $conn->error;
+   
+    try {
+        $sql = "INSERT INTO Posts (id, name, birth_date, email, message)
+        VALUES (NULL, '${name}', '${birth}', '${email}', '${message}');";
+        // use exec() because no results are returned
+        $conn->exec($sql);
+        $_SESSION['DB_updated']="Your message has been saved. Thank you!";
+    } catch(PDOException $e) {
+        echo $sql . "<br>" . $e->getMessage();
     }
-    
-    $conn->close();
+
+
+    $conn = null;
     
     header("Location: index.php");
     exit;
