@@ -48,17 +48,17 @@ class Old_message
 
 
 // connect to DB
-require_once("connect_to_DB.php");
+require_once "connect_to_db.php";
 
 
 // download old messages using PDO
 try {
-
-    $stmt = $pdo->query("SELECT * FROM $table_name ORDER BY id DESC LIMIT $number_of_posts_per_page OFFSET $calculated_offset");
-    // $stmt->execute();
-    // $result=$stmt->fetchAll();
+    $sql = "SELECT * FROM $table_name ORDER BY id DESC LIMIT $number_of_posts_per_page OFFSET $calculated_offset";
+    $result = $pdo->query($sql);
+    // $result->execute();
+    // $result=$result->fetchAll();
     // print_r($result);
-    foreach($stmt as $k=>$v) {
+    foreach($result as $k=>$v) {
         // print_r($v);
         // echo "<br>";
         $old_message = new Old_message($v["name"],$v["birth_date"],$v["message"]);
@@ -81,7 +81,7 @@ try {
 }
 
 // finish the connection
-$conn = null;
+$pdo= null;
 
 
 

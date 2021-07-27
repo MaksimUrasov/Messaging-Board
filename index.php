@@ -88,7 +88,7 @@ require_once "pre_button_logic.php";
 <!-- 
 
 
-All form fields should be protected against  SQL  intections. ? Parameterized Statements?
+
 
 If JavaScript is enabled:
 After pressing the submit button, all fields have become inactive (not editable), and instead loader diagram should appear.

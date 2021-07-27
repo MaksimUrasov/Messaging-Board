@@ -4,7 +4,7 @@
 
 
 //connect to DB
-require_once("connect_to_DB.php");
+require_once "connect_to_db.php";
 
 // Create a table
 // use exec() because no results are returned
@@ -17,12 +17,12 @@ try {
     message TEXT(500) COLLATE utf8_general_ci NOT NULL
     )";
 
-  $conn->exec($sql);
+  $pdo->exec($sql);
   echo "Table $table_name created successfully";
 } catch(PDOException $e) {
   echo $sql . "<br>" . $e->getMessage();
 }
 
 
-$conn = null;
+$pdo= null;
 

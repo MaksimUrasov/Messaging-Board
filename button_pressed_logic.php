@@ -78,43 +78,28 @@ function return_or_send_info_to_DB(){
     $email = $email ?: "NULL";    
     
     // connect to DB
-    require_once("connect_to_DB.php");
+    require_once "connect_to_db.php";
 
 
     // insert row into table
-    // try {
-    //     $sql = "INSERT INTO $table_name (id, name, birth_date, email, message)
-    //     VALUES (NULL, '${name}', '${birth}', '${email}', '${message}');";
-    //     // use exec() because no results are returned
-    //     $conn->exec($sql);
-    //     $_SESSION['DB_updated']="Your message has been saved. Thank you!";
-    // } catch(PDOException $e) {
-    //     echo $sql . "<br>" . $e->getMessage();
-    // }
-
     try {
-        $sql = $conn->prepare("INSERT INTO Posts (id, name, birth_date, email, message)
-        VALUES (NULL, :name, :birth_date, :email, :message)");
-
-        $sql->bindParam(':name', $name);
-        $sql->bindParam(':birth', $birth);
-        $sql->bindParam(':email', $email);
-        $sql->bindParam(':message', $message);
-
-        $sql->execute();
+        $sql = "INSERT INTO $table_name (id, name, birth_date, email, message)
+        VALUES (NULL, ?, ?, ?, ?)";
+        $result = $pdo->prepare($sql);
+        $result->execute(array($name,$birth,$email,$message));
+        $_SESSION['DB_updated']="Your message has been saved. Thank you!";
 
     } catch(PDOException $e) {
-        // echo $sql . "<br>" . $e->getMessage();
-        echo "Error: " . $e->getMessage();
+        // echo "Error: " . $e->getMessage();  // this shows error on same page, but as long as we redirect, have to save error to Session:
+        $_SESSION['DB_error']="Something went wrong, message not saved to DB. <br>" . "Request: ". $sql . "<br>" . $e->getMessage();
     }
 
-    $conn = null;
+    $pdo= null;
     
     header("Location: index.php");
     exit;
 
     echo "message sent to DB";
-
 
 }
 
