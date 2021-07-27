@@ -42,7 +42,7 @@ function validate_and_save_errors_to_session(){
     
     
         if($_POST["birth"] > date("Y-m-d")){
-            $_SESSION['birth_err'] = "Your birth date can not be in the future!";
+            $_SESSION['birth_err'] = " can not be in the future!"; // the beginning of the sentence " *Your date of birth" is already displayed.
             // add_css_red("birth");
         };
     
@@ -64,7 +64,7 @@ function validate_and_save_errors_to_session(){
 
 validate_and_save_errors_to_session();
 
-function return_or_send_to_DB(){
+function return_or_send_info_to_DB(){
     foreach($_SESSION as $key => $value ){
         if(str_contains($key, "err")) {
             header("Location: index.php");
@@ -75,50 +75,38 @@ function return_or_send_to_DB(){
 
     global $first_name, $last_name, $birth, $email, $message;
     $name = $first_name." ".$last_name;
-    $email = $email ?: NULL;    
+    $email = $email ?: "NULL";    
     
     // connect to DB
-    $servername = "localhost";
-    $username = "viedis_root";
-    $password = "barinme55ageb0ard";
-    $dbname = "viedis_messageboard";
-    
-    try {
-        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-        // set the PDO error mode to exception
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        // echo "Connected successfully";
-    } catch(PDOException $e) {
-        echo "Connection to DB failed: " . $e->getMessage();
-    }
-    
+    require_once("connect_to_DB.php");
+
+
     // insert row into table
-   
-    try {
-        $sql = "INSERT INTO Posts (id, name, birth_date, email, message)
-        VALUES (NULL, '${name}', '${birth}', '${email}', '${message}');";
-        // use exec() because no results are returned
-        $conn->exec($sql);
-        $_SESSION['DB_updated']="Your message has been saved. Thank you!";
-    } catch(PDOException $e) {
-        echo $sql . "<br>" . $e->getMessage();
-    }
-
     // try {
-    //     $sql = $conn->prepare("INSERT INTO Posts (id, name, birth_date, email, message)
-    //     VALUES (NULL, :name, :birth_date, :email, :message)");
-
-    //     $sql->bindParam(':name', $name);
-    //     $sql->bindParam(':birth', $birth);
-    //     $sql->bindParam(':email', $email);
-    //     $sql->bindParam(':message', $message);
-
-    //     $sql->execute();
-
+    //     $sql = "INSERT INTO $table_name (id, name, birth_date, email, message)
+    //     VALUES (NULL, '${name}', '${birth}', '${email}', '${message}');";
+    //     // use exec() because no results are returned
+    //     $conn->exec($sql);
+    //     $_SESSION['DB_updated']="Your message has been saved. Thank you!";
     // } catch(PDOException $e) {
-    //     // echo $sql . "<br>" . $e->getMessage();
-    //     echo "Error: " . $e->getMessage();
+    //     echo $sql . "<br>" . $e->getMessage();
     // }
+
+    try {
+        $sql = $conn->prepare("INSERT INTO Posts (id, name, birth_date, email, message)
+        VALUES (NULL, :name, :birth_date, :email, :message)");
+
+        $sql->bindParam(':name', $name);
+        $sql->bindParam(':birth', $birth);
+        $sql->bindParam(':email', $email);
+        $sql->bindParam(':message', $message);
+
+        $sql->execute();
+
+    } catch(PDOException $e) {
+        // echo $sql . "<br>" . $e->getMessage();
+        echo "Error: " . $e->getMessage();
+    }
 
     $conn = null;
     
@@ -130,4 +118,4 @@ function return_or_send_to_DB(){
 
 }
 
-return_or_send_to_DB();
+return_or_send_info_to_DB();

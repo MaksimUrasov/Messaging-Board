@@ -47,39 +47,23 @@ class Old_message
 };
 
 
-
-
-
 // connect to DB
-$servername = "localhost";
-$username = "viedis_root";
-$password = "barinme55ageb0ard";
-$dbname = "viedis_messageboard";
-
-
-
-try {
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    // set the PDO error mode to exception
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    // echo "Connected successfully";
-} catch(PDOException $e) {
-    echo "Connection to DB failed: " . $e->getMessage();
-}
+require_once("connect_to_DB.php");
 
 
 // download old messages using PDO
 try {
 
-    $stmt_one = $conn->prepare("SELECT * FROM Posts ORDER BY id DESC LIMIT $number_of_posts_per_page OFFSET $calculated_offset");
-    $stmt_one->execute();
-  
-    foreach($stmt_one->fetchAll() as $k=>$v) {
-        var_dump($v);
-        echo "<br>";
-        // $old_message = new Old_message($v["name"],$v["birth_date"],$v["message"]);
-        // // $old_message->set_variables($v["name"],$v["birth_date"],$v["message"]);  // I better use __construct for to pass arguments
-        // $old_message->genereate_an_html();
+    $stmt = $pdo->query("SELECT * FROM $table_name ORDER BY id DESC LIMIT $number_of_posts_per_page OFFSET $calculated_offset");
+    // $stmt->execute();
+    // $result=$stmt->fetchAll();
+    // print_r($result);
+    foreach($stmt as $k=>$v) {
+        // print_r($v);
+        // echo "<br>";
+        $old_message = new Old_message($v["name"],$v["birth_date"],$v["message"]);
+        // $old_message->set_variables($v["name"],$v["birth_date"],$v["message"]);  // I better use __construct for to pass arguments
+        $old_message->genereate_an_html();
     }
 } catch(PDOException $e) {
     echo "Error of downloading data from DB: " . $e->getMessage();
@@ -90,7 +74,7 @@ try {
 // download number of entries in DB table
 
 try {
-    $amount_of_entries = $conn->query("SELECT count(*) FROM Posts")->fetchColumn();
+    $amount_of_entries = $pdo->query("SELECT count(*) FROM $table_name")->fetchColumn();
 
 } catch(PDOException $e) {
     echo "Error of downloading data from DB: " . $e->getMessage();
