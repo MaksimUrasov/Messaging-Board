@@ -8,7 +8,7 @@ session_start();
 $server_message_ok = "";
 $server_message_err = "";
 
-function clear_session_and_show_server_messages(){  //this function is called in a div under the button.
+function clear_session_and_show_server_messages(){  
     if(array_key_exists("DB_updated",$_SESSION)){
         // echo "<br>" . $_SESSION["DB_error"];   
         global $server_message_ok;
