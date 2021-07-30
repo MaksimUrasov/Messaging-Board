@@ -13,7 +13,7 @@
 <body>
 
 <?php
-require_once "pre_button_logic.php";
+require_once "functions.php";
 ?>
 
         <main class="content">
@@ -23,20 +23,20 @@ require_once "pre_button_logic.php";
             
             <form  method="post"  action="/button_pressed_logic.php" onsubmit="JSActions()" >  
                 
-                <input type="text" name="first_name" value="<?php check_session_keys("first_name")?>" placeholder="First name" class="input first_name"  required>
-                <div class="error_message first_name_err">* <?php check_session_keys("first_name_err")?></div><br>
+                <input type="text" name="first_name" value="<?php get_session_value("first_name")?>" placeholder="First name" class="input first_name"  required>
+                <div class="error_message first_name_err">* <?php get_session_value("first_name_err")?></div><br>
 
-                <input type="text" name="last_name" value="<?php check_session_keys("last_name")?>" placeholder="Last name" class="input last_name" required>
-                <div class="error_message last_name_err">* <?php check_session_keys("last_name_err")?></div><br>
+                <input type="text" name="last_name" value="<?php get_session_value("last_name")?>" placeholder="Last name" class="input last_name" required>
+                <div class="error_message last_name_err">* <?php get_session_value("last_name_err")?></div><br>
 
-                <input type="date" name="birth" value="<?php check_session_keys("birth")?>" placeholder="Your date of birth" class="input birth" required>
-                <div class="error_message birth_err">*Your date of birth <?php check_session_keys("birth_err")?></div><br>
+                <input type="date" name="birth" value="<?php get_session_value("birth")?>" placeholder="Your date of birth" class="input birth" required>
+                <div class="error_message birth_err">*Your date of birth <?php get_session_value("birth_err")?></div><br>
 
-                <input type="email" name="email" value="<?php check_session_keys("email")?>" placeholder="Your email" class="input email">
-                <div class="error_message email_err"><?php check_session_keys("email_err")?></div><br>
+                <input type="email" name="email" value="<?php get_session_value("email")?>" placeholder="Your email" class="input email">
+                <div class="error_message email_err"><?php get_session_value("email_err")?></div><br>
 
-                <textarea name="message"  placeholder="Please enter your message here" class="input message" required><?php check_session_keys("message")?></textarea >
-                <div class="error_message message_err">* <?php check_session_keys("message_err")?></div><br>
+                <textarea name="message"  placeholder="Please enter your message here" class="input message" required><?php get_session_value("message")?></textarea >
+                <div class="error_message message_err">* <?php get_session_value("message_err")?></div><br>
 
                 <div class="mandatory_notice">*These fields are mandatory</div><br>
                 <button type="submit">Send your message</button>
@@ -47,13 +47,13 @@ require_once "pre_button_logic.php";
             <div class='server_error_message'><?php echo $server_message_err; ?></div>
             
 
-            <button onclick="JSActions()" >test JS</button> 
-            <!-- <button onclick="window.localStorage.clear();location.reload();">clear all fields</button>  -->
-
+            <!-- <button onclick="JSActions()" >test JS</button>  -->
+            
             <section class="container_for_old_messages">
                 <p class="message_container_name" id="messages" >Message history</p>
                 <?php
-                require_once "load_messages.php";
+                Loading_messages::download_old_messages();
+                Loading_messages::download_amount_of_old_messages();
                 ?>
                 <!-- <div class='container_for_one_old_message'>
                     <div class="name_and_year_container">
@@ -63,23 +63,15 @@ require_once "pre_button_logic.php";
                     <p class="old_message">Laba diena!</p> 
                 </div>
 
-                <div class='container_for_one_old_message'>
-                    <div class="name_and_year_container">
-                        <p class="old_name">Darius Kaimynas</p> 
-                        <p class="old_age">32 years</p> 
-                    </div>
-                    <p class="old_message">Laba diena!</p> 
-                </div>
 
-                <div class='container_for_one_old_message'>
-                    <div class="name_and_year_container">
-                        <p class="old_name">Darius Kaimynas</p> 
-                        <p class="old_age">33 years</p> 
-                    </div>
-                    <p class="old_message">Laba diena!</p> 
-                </div> -->
+            </section>  the whole section is generated in the load_messages.php -->
+            </section>
+            <div class='pages_container'>
+            <?php
+                Create_links_to_pages::create_page_links($amount_of_entries, $number_of_posts_per_page); 
+            ?>
+            </div>
 
-            <!-- </section>  this section is in the load_messages.php -->
 
         </main>
     </body>
@@ -88,6 +80,13 @@ require_once "pre_button_logic.php";
 <!-- 
 
 
+
+Siuo atveju kalbama apie OOP, reiketu susikurti klase, per kuria bendrausi su duomenu baze. Gali pasinaudoti constructorium uzmegsti 
+rysi su duomenu baze, ar sukurti metoda tam skirta.
+Taip pat gali pasidometi apie design patterns, duomenu bazei daznai naudojamas Singleton pattern, ir sis pattern'as leidzia tureti tik
+ viena originalu rysi su duomenu baze.
+Database klases tikslas butu uzmegsti rysi su duomenu baze, ir taip pat tureti klases metodus su kuriais atlieka select, insert, update, 
+delete sql uzklausas. Kad sukurus sios klases objekta, butu lengva dirbti su DB.
 
 
 If JavaScript is enabled:
