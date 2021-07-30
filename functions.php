@@ -91,7 +91,7 @@ $number_of_posts_per_page = 10;
 $page_to_show = (array_key_exists("page",$_GET)) ?  intval($_GET["page"]) : 1 ;
 $calculated_offset = $page_to_show * $number_of_posts_per_page - $number_of_posts_per_page;
 $amount_of_entries = null;
-$table_name = Connections_to_db::$table_name; 
+$table_name = Connect_to_db_singletone_modified::$table_name; 
 
 
 
@@ -104,7 +104,9 @@ class Loading_messages
         try {
 
             $sql = "SELECT * FROM $table_name ORDER BY id DESC LIMIT $number_of_posts_per_page OFFSET $calculated_offset";
-            $result = Connections_to_db::db_select($sql);
+
+            $connection_object = new Connections_to_db;
+            $result = $connection_object->db_select($sql);
 
             foreach($result as $k=>$v) {
                 $old_message = new Old_message($v["name"],$v["birth_date"],$v["message"]);
@@ -123,7 +125,9 @@ class Loading_messages
 
         try {
             $sql = "SELECT count(*) FROM $table_name";
-            $result = Connections_to_db::db_select($sql);
+
+            $connection_object = new Connections_to_db;
+            $result = $connection_object->db_select($sql);
             $amount_of_entries = $result->fetchColumn();
     
         } catch(PDOException $e) {
@@ -187,4 +191,4 @@ class Create_links_to_pages
 
 
 // the last thing that has to be done when all page elements are loaded - close connection to DB.
-Connections_to_db::db_close();
+// Connections_to_db::db_close();

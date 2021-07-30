@@ -5,10 +5,10 @@
 
 require_once 'manage_db.php';
 
-$table_name = "A new awesome name for a table";
+$new_table_name = "A new awesome name for a table";
 
 try {
-  $sql = "CREATE TABLE $table_name (
+  $sql = "CREATE TABLE $new_table_name (
       id INT(6) UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
       name TEXT(30) COLLATE utf8_general_ci NOT NULL,
       birth_date DATE NOT NULL,
@@ -16,8 +16,9 @@ try {
       message TEXT(500) COLLATE utf8_general_ci NOT NULL
       )";
       
-  $result = Connections_to_db::db_create($sql);
-  echo "Table $table_name created successfully";
+  $connection_object = new Connections_to_db;
+  $result = $connection_object->db_create($sql);
+  echo "Table $new_table_name created successfully";
 } catch(PDOException $e) {
   echo $sql . "<br>" . $e->getMessage();
 }

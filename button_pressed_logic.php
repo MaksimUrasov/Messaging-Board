@@ -63,7 +63,7 @@ validate_and_save_errors_to_session();
 // connect to DB
 require_once 'manage_db.php';
 
-$table_name = Connections_to_db::$table_name;
+$table_name = Connect_to_db_singletone_modified::$table_name;
 
 function return_or_send_info_to_DB(){ // here we check if there are error messages savedin SESSION and return to index.php or save info to DB and return.
     //1) option one- there are errors and we have to return
@@ -104,7 +104,11 @@ function return_or_send_info_to_DB(){ // here we check if there are error messag
         $sql = "INSERT INTO $table_name (id, name, birth_date, email, message)
         VALUES (NULL, ?, ?, ?, ?)";
 
-        Connections_to_db::db_insert($sql,$name,$birth,$email,$message);
+        // Connections_to_db::db_insert($sql,$name,$birth,$email,$message);
+
+        $connection_object = new Connections_to_db;
+        $connection_object->db_insert($sql,$name,$birth,$email,$message);
+        
         $_SESSION['DB_updated']="Your message has been saved. Thank you!";
 
 
@@ -123,4 +127,4 @@ function return_or_send_info_to_DB(){ // here we check if there are error messag
 return_or_send_info_to_DB();
 
 // the last thing that has to be done when all page elements are loaded - close connection to DB.
-Connections_to_db::db_close();
+// Connections_to_db::db_close();
