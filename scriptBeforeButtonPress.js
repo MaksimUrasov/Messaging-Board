@@ -146,12 +146,25 @@ function Actions(){
             //then AJAX
 
 
+            function saveToDB(firstName,lastName, birthDate, email, message) {
+                const xhttp = new XMLHttpRequest();
+                xhttp.onload = function() {
+                    // here I will parse the data
+                  //document.getElementById("txtHint").innerHTML = this.responseText;
+                }
+                var messageString = "first_name="+firstName+"&last_name="+lastName+"&birth="+birthDate+"&email="+email+"&message="+message;
+                xhttp.open("POST", "message.vienasmedis.lt/button_pressed_logic.php");
+                xhttp.send();
+            }
 
+            // var inputsObj = {"first_name" : firstName, "last_name": lastName, "birth": birthDate, "email": email, "message": message};
+            // var inputJSON = JSON.stringify(inputsObj);
+            
 
+            saveToDB()
 
-        }
-
-       
+        } 
+    
 
 
     }

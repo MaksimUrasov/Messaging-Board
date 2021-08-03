@@ -13,7 +13,7 @@ session_start();   //destroying the Session from starting a new session, so I ha
 
 
 
-function validate_and_save_errors_to_session(){
+function validate_and_save_errors_to_session(){ // JS makes same validation in browser, but it is better to recheck data on server
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
         if(!preg_match("/^[a-zA-Z-' ]*$/",$_POST["first_name"])){
@@ -80,6 +80,7 @@ function return_or_send_info_to_DB(){ // here we check if there are error messag
     
     
     //2) option two- there are no errors and we have to save the info to DB and then return
+    // this piece of code will be used by AJAX too
      
     
     $first_name = test_input($_POST["first_name"]); // each POST value has to be saved to $_SESSION to be shown again if there are errors.
