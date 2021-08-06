@@ -47,7 +47,7 @@ require_once "functions.php";
                 
                 <div id="button_created_by_JS"></div>
 
-                <button type="submit">Send your message</button>
+                <button class="button" type="submit">Send your message</button>
 
                 <div class="lds-facebook"><div></div><div></div><div></div></div> <!-- copied from https://loading.io/css/ -->
 
@@ -59,8 +59,8 @@ require_once "functions.php";
 
             <!-- <button onclick="JSActions()" >test JS</button>  -->
             
-            <section class="container_for_old_messages">
-                <p class="message_container_name" id="messages" >Message history</p>
+            <section id="container_for_old_messages">
+                <p id="name_for_message_container" >Message history</p>
                 <?php
                 //3)
                 Loading_messages::download_old_messages();
@@ -88,16 +88,13 @@ require_once "functions.php";
 <!-- 
 
 
-AJAX query results must be sent in XML or JSON format.
 
-// I choose JSON because it is faster and better than XML: https://www.w3schools.com/js/js_json_xml.asp
+
+// I chose JSON because it is faster and better than XML: https://www.w3schools.com/js/js_json_xml.asp
 
 If JavaScript is enabled:
 
-In case of success, the most recent message should be placed on top using JavaScript The oldest message should be removed from the screen. All form 
-fields should be activated again.
-In case any errors are detected, fields must be marked and fields should be activated so that user can edit their input.
-In both cases, the loader should disappear and the button should appiear instead.
+In case of success, the most recent message should be placed on top using JavaScript The oldest message should be removed from the screen. 
 
 
 Bonus points:
@@ -113,4 +110,8 @@ Full source code and the database structure should be sent back to us as a proof
 Duomenų bazė:	viedis_messageboard
 Serveris (host):	localhost
 Naudotojo vardas:	viedis_root
-Slaptažodis:	barinme55ageb0ard -->
+Slaptažodis:	barinme55ageb0ard 
+
+naudotojas@vienasmedis.lt
+gZ5NedQeM3tguNYR
+-->

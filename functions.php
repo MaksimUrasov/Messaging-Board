@@ -164,8 +164,8 @@ class Old_message {
     public function genereate_an_html(){
         echo "<div class='container_for_one_old_message'>
         <div class='name_and_year_container'>
-        <p class='old_name'><i>" . $this->generated_name . ",&#160</i></p>  
-        <p class='old_age'><i>" . $this->generated_age . " years.</i></p> 
+            <p class='old_name'>" . $this->generated_name . ",</p>  
+            <p class='old_age'>" . $this->generated_age . " years.</p> 
         </div>
         <p class='old_message'>" . $this->generated_message . "</p> 
         </div>"; // &#160 represents a space character.
