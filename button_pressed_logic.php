@@ -89,15 +89,8 @@ if (array_key_exists("first_name", $_POST)) { // true means info came from index
 //this piece of code shall be executed any way:
 
 
-
-
-
-// $first_name = $last_name = $birth = $email = $message = "";
-// $first_name_err = $last_name_err = $birth_err = $email_err = $message_err = "";
-
-
 function validate_and_save_errors_to_session($fn, $ln, $b, $e, $m){ // JS makes same validation in browser, but it is better to recheck data on server      
-    global $name, $first_name, $last_name, $birth, $email, $message; // I will need them in global scope so save in DB on send_info_to_DB()
+    global $first_name, $last_name, $birth, $email, $message; // I will need them in global scope to save in DB on send_info_to_DB()
 
     $first_name = test_input($fn); 
     $last_name = test_input($ln);  
@@ -142,25 +135,14 @@ function validate_and_save_errors_to_session($fn, $ln, $b, $e, $m){ // JS makes 
     
 
 
-function send_info_to_DB($name,$birth,$email,$message){ // here we check if there are error messages savedin SESSION and return to index.php or save info to DB and return.
+function send_info_to_DB($name,$birth,$email,$message){ // here we check if there are error messages saved in SESSION and return to index.php or save info to DB and return.
     
-    
-    // $first_name = test_input($_POST["first_name"]); // each POST value has to be saved to $_SESSION to be shown again if there are errors.
-    // $last_name = test_input($_POST["last_name"]);  // if there are no errors, $these 
-    // $name = $first_name." ".$last_name;
-
-    // $birth = test_input($_POST["birth"]); 
-    // $email = test_input($_POST["email"]) ?: "NULL";
-    // $message = test_input($_POST["message"]);
-
     // insert row into DB table
     try {
         global $table_name;
 
         $sql = "INSERT INTO $table_name (id, name, birth_date, email, message)
         VALUES (NULL, ?, ?, ?, ?)";
-
-        // Connections_to_db::db_insert($sql,$name,$birth,$email,$message);
 
         $connection_object = new Connections_to_db;
         $connection_object->db_insert($sql,$name,$birth,$email,$message);
@@ -176,8 +158,3 @@ function send_info_to_DB($name,$birth,$email,$message){ // here we check if ther
     //echo "message sent to DB";
 
 }
-
-
-
-// the last thing that has to be done when all page elements are loaded - close connection to DB.
-// Connections_to_db::db_close();

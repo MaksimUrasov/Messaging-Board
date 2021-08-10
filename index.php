@@ -56,7 +56,6 @@ require_once "functions.php";
             <div id='server_success_message'><?php echo $server_message_ok; ?></div>
             <div id='server_error_message'><?php echo $server_message_err; ?></div>
             
-
             <!-- <button onclick="JSActions()" >test JS</button>  -->
             
             <section id="container_for_old_messages">
@@ -94,13 +93,9 @@ require_once "functions.php";
 mvc pattern
 JS OOP
 
-
 Bonus points:
 Design Patterns are employed (Singleton, Factory, etc.)
-The code should be clean, neat, with comments in English.
-
-result:
-Full source code and the database structure should be sent back to us as a proof of work done.  -->
+-->
 
 
 

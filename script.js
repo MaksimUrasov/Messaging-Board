@@ -352,15 +352,3 @@ function Actions(){
 
 // Actions()
 
-
-
-// All form fields should be protected against XSS, SQL / JavaScript intections. HTML input should not be allowed. Inputs containing HTML text should be cleaned from any HTML code before they are saved in database.
-
-
-// If JavaScript is enabled:
-
-// In case of success, the most recent message should be placed on top using JavaScript The oldest message should be removed from the screen. All form 
-// fields should be activated again.
-
-// In both cases, the loader should disappear and the button should appiear instead.
-
