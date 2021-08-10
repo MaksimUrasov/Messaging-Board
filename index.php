@@ -7,13 +7,17 @@
     <title>Messaging board</title>
     <link rel="stylesheet" href="/styles.css">
     
-        <!-- below is to delete GEThttp://localhost:3000/favicon.ico  404 ERROR -->
+        <!-- below is to eliminate favicon.ico 404 ERROR in console-->
     <link rel="icon" type="image/ico" href="/img/1.ico" >
 </head>
 <body>
 
 <?php
-require_once "functions.php";
+
+// require_once "run.php"; 
+
+require_once "functions.php";// here I should add view class only, as this index file is already "view" according to MVC pattern.
+
 ?>
 
         <main class="content">
@@ -26,8 +30,35 @@ require_once "functions.php";
                 <br>
             </noscript>
             
-            <form  method="post" action="/button_pressed_logic.php" onsubmit="Actions()" >  
+            <!-- <form  method="post" action="/button_pressed_logic.php" onsubmit="Actions()" >   
                 
+                <input type="text" class="input first_name" name="first_name" value="<?php //$view->get_session_value("first_name")?>" placeholder="First name"   required>
+                <div class="error_message first_name_err">* First Name <?php //$view->get_session_value("first_name_err")?></div><br>
+
+                <input type="text" class="input last_name" name="last_name" value="<?php //$view->get_session_value("last_name")?>" placeholder="Last name"  required>
+                <div class="error_message last_name_err">* Last name <?php //$view->get_session_value("last_name_err")?></div><br>
+
+                <input type="date" class="input birth" name="birth" value="<?php //$view->get_session_value("birth")?>" placeholder="Your date of birth"  required>
+                <div class="error_message birth_err">* Your date of birth <?php //$view->get_session_value("birth_err")?></div><br>
+
+                <input type="email" class="input email" name="email" value="<?php //$view->get_session_value("email")?>" placeholder="Your email" >
+                <div class="error_message email_err">  E-mail<?php //$view->get_session_value("email_err")?></div><br>
+
+                <textarea name="message" class="input message" placeholder="Please enter your message here"  required><?php //$view->get_session_value("message")?></textarea >
+                <div class="error_message message_err">* Message <?php //$view->get_session_value("message_err")?></div><br> 
+            
+                <div class="mandatory_notice">*These fields are mandatory</div><br>
+                
+                <div id="button_created_by_JS"></div>
+
+                <button class="button" type="submit">Send your message</button>
+
+                <div class="lds-facebook"><div></div><div></div><div></div></div> --> <!-- copied from https://loading.io/css/ -->
+
+            <!-- </form> -->
+
+
+            <form  method="post" action="/button_pressed_logic.php" onsubmit="Actions()" > 
                 <input type="text" class="input first_name" name="first_name" value="<?php get_session_value("first_name")?>" placeholder="First name"   required>
                 <div class="error_message first_name_err">* First Name <?php get_session_value("first_name_err")?></div><br>
 
@@ -43,6 +74,8 @@ require_once "functions.php";
                 <textarea name="message" class="input message" placeholder="Please enter your message here"  required><?php get_session_value("message")?></textarea >
                 <div class="error_message message_err">* Message <?php get_session_value("message_err")?></div><br>
 
+
+
                 <div class="mandatory_notice">*These fields are mandatory</div><br>
                 
                 <div id="button_created_by_JS"></div>
@@ -53,6 +86,9 @@ require_once "functions.php";
 
             </form>
 
+             <?php
+                //$view->show_server_messages();
+            ?> 
             <div id='server_success_message'><?php echo $server_message_ok; ?></div>
             <div id='server_error_message'><?php echo $server_message_err; ?></div>
             

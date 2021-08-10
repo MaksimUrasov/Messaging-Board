@@ -6,6 +6,9 @@ session_start();
 session_destroy(); // This is necessary to delete old data, from previous "send message". All fresh data will be received via POST method.
 session_start();   //destroying the Session from starting a new session, so I have to start session again
 
+// print_r($_SESSION);
+// echo "<br>";
+// print_r($_POST);
 
 // connect to DB
 require_once 'manage_db.php';
@@ -58,6 +61,7 @@ if (array_key_exists("first_name", $_POST)) { // true means info came from index
 
 }else {
     $data = json_decode(file_get_contents("php://input"));
+
     // echo "Server has has received POST request from AJAX. Received data: " . $data . "<br>";
     // var_dump($data);
     // var_dump($_POST);
@@ -74,12 +78,14 @@ if (array_key_exists("first_name", $_POST)) { // true means info came from index
     $email = $email ?: "NULL"; // to save text "NULL" to DB on later stage
     $sending_to_DB_result = send_info_to_DB($name,$birth,$email,$message);
 
-    if($sending_to_DB_result[0]){
-        echo $sending_to_DB_result[0];
+    print_r($sending_to_DB_result) ;
 
-    }else{
-        echo "Something went wrong, message not saved to DB. <br>" . "Request: ". $sending_to_DB_result[1] . "<br>" . $sending_to_DB_result[2];
-    };
+    // if($sending_to_DB_result[0]){
+    //     echo $sending_to_DB_result;
+
+    // }else{
+    //     echo "Something went wrong, message not saved to DB. <br>" . "Request: ". $sending_to_DB_result[1] . "<br>" . $sending_to_DB_result[2];
+    // };
 
     // there is no redirect back to index.php
 
@@ -90,7 +96,7 @@ if (array_key_exists("first_name", $_POST)) { // true means info came from index
 
 
 function validate_and_save_errors_to_session($fn, $ln, $b, $e, $m){ // JS makes same validation in browser, but it is better to recheck data on server      
-    global $first_name, $last_name, $birth, $email, $message; // I will need them in global scope to save in DB on send_info_to_DB()
+    global $first_name, $last_name, $birth, $email, $message; // I will need them in global scope so save in DB on send_info_to_DB()
 
     $first_name = test_input($fn); 
     $last_name = test_input($ln);  
@@ -137,6 +143,7 @@ function validate_and_save_errors_to_session($fn, $ln, $b, $e, $m){ // JS makes 
 
 function send_info_to_DB($name,$birth,$email,$message){ // here we check if there are error messages saved in SESSION and return to index.php or save info to DB and return.
     
+
     // insert row into DB table
     try {
         global $table_name;
@@ -144,17 +151,25 @@ function send_info_to_DB($name,$birth,$email,$message){ // here we check if ther
         $sql = "INSERT INTO $table_name (id, name, birth_date, email, message)
         VALUES (NULL, ?, ?, ?, ?)";
 
+        // Connections_to_db::db_insert($sql,$name,$birth,$email,$message);
+
         $connection_object = new Connections_to_db;
         $connection_object->db_insert($sql,$name,$birth,$email,$message);
         
         $success = true; 
-        return array($success);
+        return array($success, "message saved to DB"); // this array will be visible in console log and JS will look for phraze "message saved to DB".
 
     } catch(PDOException $e) {
         $success = false; 
+        return array($success, $sql, $e->getMessage());// this array will be visible in console log
     }
-    return array($success, $sql, $e->getMessage());
+    
     
     //echo "message sent to DB";
 
 }
+
+
+
+// the last thing that has to be done when all page elements are loaded - close connection to DB.
+// Connections_to_db::db_close();

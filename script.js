@@ -298,21 +298,23 @@ function Actions(){
                 //     // here I will parse the data
                 //   //document.getElementById("txtHint").innerHTML = this.responseText;
                 // }
-                xhttp.open("POST", "/button_pressed_logic.php", true); //.php?request=byAJAX
+                xhttp.open("POST", "/button_pressed_logic.php", true);
                 xhttp.setRequestHeader("Content-Type", "application/json, charset=utf-8");
                 xhttp.onload = function() {
                     if (this.readyState == 4 && this.status == 200) {
                         
                         let response = this.responseText; 
                         // console.log(response)
-                        if (response == 1) { // this is the case when server responds "1"- which means "am fine, your message saved"
+                        if (response.includes("message saved to DB")) { // this is the case when server responds "1"- which means "am fine, your message saved"
                             server_success_message.innerHTML ="Your message has been saved. Thank you!";
                             removeOldMessageAndAddNew(firstName,lastName, birthDate, eMail, msg)
                             removeInputValues();
+                            console.log(response);
 
                             
                         } else {
-                            server_error_message.innerHTML = "Something went wrong :( Message not saved.";
+                            server_error_message.innerHTML = "Something went wrong :( Message may be not saved.";
+                            console.log(response);
                         }
 
                         hideOrShow("lds-facebook","button");
