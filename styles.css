@@ -33,15 +33,15 @@ p{
     font-size: small;
 }
 
-#server_error_message, noscript {
+.server_error_message {
     color:red;
 }
 
-#server_success_message{
+.server_success_message{
     color:green;
 }
 
-#container_for_old_messages{
+.container_for_old_messages{
     border:var(--dark_brown) 1px solid;
     margin-top: 1vw;    
 }
@@ -50,17 +50,13 @@ p{
     padding:0.4vw 0.2vw 0.4vw 0.2vw;
 }
 
-.container_for_one_old_message:nth-child(even) {
-    background-color: var(--light_brown);
-}
+.container_for_one_old_message:nth-child(even) {background-color: var(--light_brown);}
 
 .name_and_year_container{
     display: flex;
-    font-style: italic;
-    gap:0.4vw; /* this one gives a spave between the name and age blocks  */
 }
 
-#name_for_message_container{
+.message_container_name{
     padding:0.4vw 0.4vw 0.4vw 0.4vw;
     font-weight: bold;
 }
@@ -71,73 +67,6 @@ p{
     margin-right: auto;
 }
 
-.page_links_container {
-    display: flex;
-    justify-content:center;
-}
-.page_links_container > p {
+.pages_container > a {
     padding: 0.2vw;
-}
-
-
-
-
-/* spinner css is below */
-.lds-facebook {
-    /* display: inline-block; */
-    position: relative;
-    width: 60px;
-    height: 60px;
-    
-    
-    /*  display: block;    this one (together with width property) is necessary for margin: auto to work. I will add it */
-    margin: auto;
-    display: none;
-}
-.lds-facebook div {
-    display: inline-block;
-    position: absolute;
-    left: 8px;
-    width: 16px;
-    background: #fff;
-    animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
-}
-.lds-facebook div:nth-child(1) {
-    left: 8px;
-    animation-delay: -0.24s;
-}
-.lds-facebook div:nth-child(2) {
-    left: 32px;
-    animation-delay: -0.12s;
-}
-.lds-facebook div:nth-child(3) {
-    left: 56px;
-    animation-delay: 0;
-}
-@keyframes lds-facebook {
-    0% {
-      top: 8px;
-      height: 64px;
-    }
-    50%, 100% {
-      top: 24px;
-      height: 32px;
-    }
-}
-  
-
-
-/* below I have some classes that will be added or removed by JS dynamically. Maybe can use them by PHP too? */
-.red {
-    color:red;
-    font-size: 100%;
-}
-
-.green {
-    border-color: green;
-     
-}
-
-.hide {
-    display: none;
 }
