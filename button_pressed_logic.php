@@ -13,9 +13,9 @@ $table_name = Connect_to_db_singletone_modified::$table_name;
 $confirmation_to_client_message_saved = "Your message has been saved. Thank you!"; 
 
 function test_input($data) {
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
+    $data = trim($data); //Strip unnecessary characters (extra space, tab, newline)
+    $data = stripslashes($data); //Remove backslashes (\) 
+    $data = htmlspecialchars($data); //converts special characters to HTML entities.
     return $data;
 };
 $first_name = $last_name = $birth = $email = $message = $name = "";// to have global variables scope

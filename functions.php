@@ -30,16 +30,14 @@ class Dealing_with_form_errors {
             // echo "<br>" . $_SESSION["DB_error"];   
             global $server_message_ok;
             $server_message_ok = $_SESSION["DB_updated"]; 
-            session_destroy(); // this is necessary to empty the session and allow user to enter a new message.
-            session_start(); 
         }
         if(array_key_exists("DB_error",$_SESSION)){
-            echo "<br>" . $_SESSION["DB_error"];
+            // echo "<br>" . $_SESSION["DB_error"];
             global $server_message_err;
             $server_message_err = $_SESSION["DB_error"];    
-            session_destroy(); // this is necessary to empty the session and allow user to enter a new message. //even there is an error?
-            session_start();  
         }
+        session_destroy(); // this is necessary to empty the session and allow user to enter a new message. //even there is an error?
+        session_start(); 
     }
 
     static public function apply_additional_css(){
@@ -198,12 +196,3 @@ class Create_links_to_pages { // this class is called from index.php // this cla
     }
 
 };
-
-
-// the last thing that has to be done when all page elements are loaded - close connection to DB.
-// Connections_to_db::db_close();
-
-
-// for ($i = 1; $i <= $amount_of_pages; $i++) {
-//     echo "<a href='http://message.vienasmedis.lt/index.php?page=$i,tag=#messages'>$i</a>"; 
-// };

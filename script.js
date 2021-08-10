@@ -1,9 +1,53 @@
-// 1) actions that are needed BEFORE the button is pressed//
+// -----------------------THE NEW, OOP MVC STYLE--------------------------
+
+// class Model {
+//     constructor() {}
+// }
+
+// class View {
+//     constructor() {}    
+    
+//     takeOverControl() {
+//         document.getElementsByTagName("form")[0].removeAttribute("action"); // this one says: "hey form, Captain JS is here, so do not process the action, give control to me!"
+//         // only removing the "action" attribute from a form was not good, because that caused page reload after button press in Safari. So had to add below:
+//         document.getElementsByTagName("form")[0].setAttribute("action", "javascript:void(0);")
+//         console.log("I am ready to continue, but this function has to be simplified");
+//     }
+
+// }
+
+// class Controller {
+//     constructor(model, view) {
+//         this.model = model
+//         this.view = view
+//     };
+
+
+
+
+
+// }
+
+// const app = new Controller(new Model(), new View())
+
+// // 1) actions that are needed BEFORE the button is pressed
+
+// //First, JS has to take control over the form if JS is enabled:
+// app.model.takeOverControl();
+
+
+
+
+
+// -----------------------THE OLD, FUNCTIONAL STYLE--------------------------
+
+// 1) actions that are needed BEFORE the button is pressed
 
 //First, JS has to take control over the form if JS is enabled:
 document.getElementsByTagName("form")[0].removeAttribute("action"); // this one says: "hey form, Captain JS is here, so do not process the action, give control to me!"
 // only removing the "action" attribute from a form was not good, because that caused page reload after button press in Safari. So had to add below:
 document.getElementsByTagName("form")[0].setAttribute("action", "javascript:void(0);")
+
 
 
 let firstNameErrNode = document.getElementsByClassName("first_name_err")[0];
@@ -24,6 +68,9 @@ let msgErrText =  msgErrNode.innerText;
 
 let today = new Date();
 
+let server_success_message = document.getElementById("server_success_message");
+let server_error_message = document.getElementById("server_error_message");
+
 // Functions for visual appearance :
 function addCssGreen(classToChange){
     let node = document.getElementsByClassName(classToChange)[0];
@@ -43,7 +90,6 @@ function addCssRed(classToChange){
 }
 
 function removeColorAndChangeToAccepted(classToChange){
-    
     let node = document.getElementsByClassName(classToChange)[0];
     node.classList.remove("red");
     node.textContent = "Accepted";
@@ -137,12 +183,9 @@ function Actions(){
     let birthDate = document.getElementsByName("birth")[0].value;
     let eMail = document.getElementsByName("email")[0].value;  // here in JS I can not use same variable name as had in PHP, to create an object let messageObject.  
     let msg = document.getElementsByName("message")[0].value; // email and message were identical. Objects keys have to be 
-    
-
-
-
-    document.getElementsByClassName("server_success_message")[0].innerHTML ="" // if the last message has been sent and user submits another message.
-    document.getElementsByClassName("server_error_message")[0].innerHTML =""
+        
+    server_success_message.innerHTML = ""; // if the last message has been sent and user submits another message.
+    server_error_message.innerHTML = "";
 
     // validate the input and save results to error variables:
 
@@ -259,19 +302,17 @@ function Actions(){
                 xhttp.setRequestHeader("Content-Type", "application/json, charset=utf-8");
                 xhttp.onload = function() {
                     if (this.readyState == 4 && this.status == 200) {
-                        // document.getElementsByClassName("server_success_message")[0].innerHTML = xhttp.responseText;
-                        // Response
-                        // let response = JSON.parse(this.responseText)[0]; 
+                        
                         let response = this.responseText; 
                         // console.log(response)
                         if (response == 1) { // this is the case when server responds "1"- which means "am fine, your message saved"
-                            document.getElementsByClassName("server_success_message")[0].innerHTML ="Your message has been saved. Thank you!"
+                            server_success_message.innerHTML ="Your message has been saved. Thank you!";
                             removeOldMessageAndAddNew(firstName,lastName, birthDate, eMail, msg)
                             removeInputValues();
 
                             
                         } else {
-                            document.getElementsByClassName("server_error_message")[0].innerHTML = "Something went wrong :( Message not saved."
+                            server_error_message.innerHTML = "Something went wrong :( Message not saved.";
                         }
 
                         hideOrShow("lds-facebook","button");
@@ -283,7 +324,7 @@ function Actions(){
                         }
                         
                         
-                        // document.getElementsByClassName("server_error_message")[0].innerHTML = response;
+                        // document.getElementsByClassName("server_server_error_message")[0].innerHTML = response;
                     
                     } else {
                         console.log('Error Code: '+ xhttp.status);

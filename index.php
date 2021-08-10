@@ -53,8 +53,8 @@ require_once "functions.php";
 
             </form>
 
-            <div class='server_success_message'><?php echo $server_message_ok; ?></div>
-            <div class='server_error_message'><?php echo $server_message_err; ?></div>
+            <div id='server_success_message'><?php echo $server_message_ok; ?></div>
+            <div id='server_error_message'><?php echo $server_message_err; ?></div>
             
 
             <!-- <button onclick="JSActions()" >test JS</button>  -->
@@ -79,22 +79,20 @@ require_once "functions.php";
                     Create_links_to_pages::create_page_links($amount_of_pages, $page_to_show); 
                 ?>
             </div>
+            
         </main>
     </body>
-    <script src="/scriptBeforeButtonPress.js"></script>
-    <script src="/scriptAfterButtonPress.js"></script>
+    <script src="/script.js"></script> 
 </html>
 
+
+
 <!-- 
-
-
-
-
 // I chose JSON because it is faster and better than XML: https://www.w3schools.com/js/js_json_xml.asp
 
-If JavaScript is enabled:
 
-In case of success, the most recent message should be placed on top using JavaScript The oldest message should be removed from the screen. 
+mvc pattern
+JS OOP
 
 
 Bonus points:
@@ -106,12 +104,3 @@ Full source code and the database structure should be sent back to us as a proof
 
 
 
-<!-- 
-Duomenų bazė:	viedis_messageboard
-Serveris (host):	localhost
-Naudotojo vardas:	viedis_root
-Slaptažodis:	barinme55ageb0ard 
-
-naudotojas@vienasmedis.lt
-gZ5NedQeM3tguNYR
--->

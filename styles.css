@@ -33,11 +33,11 @@ p{
     font-size: small;
 }
 
-.server_error_message, noscript {
+#server_error_message, noscript {
     color:red;
 }
 
-.server_success_message{
+#server_success_message{
     color:green;
 }
 
