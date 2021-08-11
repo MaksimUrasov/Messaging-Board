@@ -68,8 +68,15 @@ let msgErrText =  msgErrNode.innerText;
 
 let today = new Date();
 
-let server_success_message = document.getElementById("server_success_message");
-let server_error_message = document.getElementById("server_error_message");
+// let formElement = document.getElementsByTagName("form");
+// console.log(formElement);
+// let server_success_message = document.createElement("div");
+// let server_error_message = document.createElement("div");
+// formElement.after(server_success_message);
+// formElement.after(server_error_message);
+
+let server_success_message = document.getElementById("server_success_message") 
+let server_error_message = document.getElementById("server_error_message") 
 
 // Functions for visual appearance :
 function addCssGreen(classToChange){
@@ -184,6 +191,12 @@ function Actions(){
     let eMail = document.getElementsByName("email")[0].value;  // here in JS I can not use same variable name as had in PHP, to create an object let messageObject.  
     let msg = document.getElementsByName("message")[0].value; // email and message were identical. Objects keys have to be 
         
+    if (server_success_message) {
+        server_success_message.innerHTML = "";
+    }
+    if (server_error_message) {
+        
+    }
     server_success_message.innerHTML = ""; // if the last message has been sent and user submits another message.
     server_error_message.innerHTML = "";
 
