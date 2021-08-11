@@ -32,24 +32,23 @@ require_once "functions.php";// here I should add view class only, as this index
             
             <!-- <form  method="post" action="/button_pressed_logic.php" onsubmit="Actions()" >   
                 
+                <div class="error_message first_name_err">* First name <?php //$view->get_session_value("first_name_err")?></div>
                 <input type="text" class="input first_name" name="first_name" value="<?php //$view->get_session_value("first_name")?>" placeholder="First name"   required>
-                <div class="error_message first_name_err">* First Name <?php //$view->get_session_value("first_name_err")?></div><br>
 
+                <div class="error_message last_name_err">* Last name <?php //$view->get_session_value("last_name_err")?></div>
                 <input type="text" class="input last_name" name="last_name" value="<?php //$view->get_session_value("last_name")?>" placeholder="Last name"  required>
-                <div class="error_message last_name_err">* Last name <?php //$view->get_session_value("last_name_err")?></div><br>
 
+                <div class="error_message birth_err">* Your date of birth <?php //$view->get_session_value("birth_err")?></div>
                 <input type="date" class="input birth" name="birth" value="<?php //$view->get_session_value("birth")?>" placeholder="Your date of birth"  required>
-                <div class="error_message birth_err">* Your date of birth <?php //$view->get_session_value("birth_err")?></div><br>
 
+                <div class="error_message email_err">  E-mail<?php //$view->get_session_value("email_err")?></div>
                 <input type="email" class="input email" name="email" value="<?php //$view->get_session_value("email")?>" placeholder="Your email" >
-                <div class="error_message email_err">  E-mail<?php //$view->get_session_value("email_err")?></div><br>
 
-                <textarea name="message" class="input message" placeholder="Please enter your message here"  required><?php //$view->get_session_value("message")?></textarea >
-                <div class="error_message message_err">* Message <?php //$view->get_session_value("message_err")?></div><br> 
+                <div class="error_message message_err">* Message <?php //$view->get_session_value("message_err")?></div> 
+                <textarea  class="input message" name="message" placeholder="Please enter your message here"  required><?php //$view->get_session_value("message")?></textarea >
+
             
                 <div class="mandatory_notice">*These fields are mandatory</div><br>
-                
-                <div id="button_created_by_JS"></div>
 
                 <button class="button" type="submit">Send your message</button>
 
@@ -59,26 +58,24 @@ require_once "functions.php";// here I should add view class only, as this index
 
 
             <form  method="post" action="/button_pressed_logic.php" onsubmit="Actions()" > 
+                
+                <div class="error_message first_name_err">* First name <?php get_session_value("first_name_err")?></div>
                 <input type="text" class="input first_name" name="first_name" value="<?php get_session_value("first_name")?>" placeholder="First name"   required>
-                <div class="error_message first_name_err">* First Name <?php get_session_value("first_name_err")?></div><br>
 
+                <div class="error_message last_name_err">* Last name <?php get_session_value("last_name_err")?></div>
                 <input type="text" class="input last_name" name="last_name" value="<?php get_session_value("last_name")?>" placeholder="Last name"  required>
-                <div class="error_message last_name_err">* Last name <?php get_session_value("last_name_err")?></div><br>
 
+                <div class="error_message birth_err">* Your date of birth <?php get_session_value("birth_err")?></div>
                 <input type="date" class="input birth" name="birth" value="<?php get_session_value("birth")?>" placeholder="Your date of birth"  required>
-                <div class="error_message birth_err">* Your date of birth <?php get_session_value("birth_err")?></div><br>
 
+                <div class="error_message email_err">  E-mail<?php get_session_value("email_err")?></div>
                 <input type="email" class="input email" name="email" value="<?php get_session_value("email")?>" placeholder="Your email" >
-                <div class="error_message email_err">  E-mail<?php get_session_value("email_err")?></div><br>
 
-                <textarea name="message" class="input message" placeholder="Please enter your message here"  required><?php get_session_value("message")?></textarea >
-                <div class="error_message message_err">* Message <?php get_session_value("message_err")?></div><br>
-
+                <div class="error_message message_err">* Message <?php get_session_value("message_err")?></div>
+                <textarea class="input message" name="message"  placeholder="Please enter your message here"  required><?php get_session_value("message")?></textarea >
 
 
                 <div class="mandatory_notice">*These fields are mandatory</div><br>
-                
-                <div id="button_created_by_JS"></div>
 
                 <button class="button" type="submit">Send your message</button>
 
@@ -88,6 +85,9 @@ require_once "functions.php";// here I should add view class only, as this index
 
              <?php
                 //$view->show_server_messages();
+                Dealing_with_form_errors::apply_additional_css();
+                Dealing_with_form_errors::show_server_messages();
+                
             ?> 
             <div id='server_success_message'><?php echo $server_message_ok; ?></div>
             <div id='server_error_message'><?php echo $server_message_err; ?></div>
@@ -97,6 +97,7 @@ require_once "functions.php";// here I should add view class only, as this index
             <section id="container_for_old_messages">
                 <p id="name_for_message_container" >Message history</p>
                 <?php
+                
                 //3)
                 Loading_messages::download_old_messages();
                 ?>

@@ -303,19 +303,21 @@ function Actions(){
                 xhttp.onload = function() {
                     if (this.readyState == 4 && this.status == 200) {
                         
-                        let response = this.responseText; 
-                        // console.log(response)
-                        if (response.includes("message saved to DB")) { // this is the case when server responds "1"- which means "am fine, your message saved"
-                            server_success_message.innerHTML ="Your message has been saved. Thank you!";
-                            removeOldMessageAndAddNew(firstName,lastName, birthDate, eMail, msg)
+                        try {// if there are errors, they will be saved in JSON message too
+                            let response = JSON.parse(this.responseText);  
+                            // let response = this.responseText;  
+                            if (response[0]) {// this is the case when server responds "1"- which means "am fine, your message saved"
+                                server_success_message.innerHTML = response[1]
+                                removeOldMessageAndAddNew(firstName,lastName, birthDate, eMail, msg)
                             removeInputValues();
                             console.log(response);
+                            }
 
-                            
-                        } else {
-                            server_error_message.innerHTML = "Something went wrong :( Message may be not saved.";
-                            console.log(response);
+                        } catch (error) {
+                            server_error_message.innerHTML = `Something went wrong :( Message may be not saved. JSON error: ${error}`;
+                            console.log(response);                            
                         }
+
 
                         hideOrShow("lds-facebook","button");
                         restoreInputErrorMessageText();

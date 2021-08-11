@@ -3,15 +3,17 @@
 session_start();
 
 // 1) option one: the piece of code that is needed when a webpage is loading for the first time, no errors or previous inputs
+// print_r($_SESSION); // session contains previous input values and error messages.
 
 function get_session_value($key){ //this function is needed for each form input value.
-    if(array_key_exists($key,$_SESSION)){
+    if(array_key_exists($key,$_SESSION) && $_SESSION[$key] != null){  
         echo $_SESSION[$key];
     } else{
         echo "";
-        //print_r($_SESSION);
+        
     }
 };
+// echo get_session_value("first_name_err");
 
 
 // 2) option two: code below is necessary when the website is loaded not the first time: form has been submitted, but may contain errors.
@@ -20,10 +22,40 @@ function get_session_value($key){ //this function is needed for each form input 
 $server_message_ok = "";
 $server_message_err = "";
 
-Dealing_with_form_errors::show_server_messages();
-Dealing_with_form_errors::apply_additional_css();
+
 
 class Dealing_with_form_errors {
+
+    static public function apply_additional_css(){
+
+        foreach ($_SESSION as $key => $value) {
+            if (str_contains($key, "_err") && isset($value) ) { //ther is error message
+                self::add_css_error($key);
+            } elseif(str_contains($key, "_err")) { // no errors
+                $key_without_err = str_replace("_err", "",$key);
+
+                self::add_css_complete($key_without_err);
+            } // do nothing with the input values in Session, we need only to change appearance according to error messages in session.
+        }
+    }
+
+        
+        // print_r($_SESSION); // session contains keys like "name" and "name_err" and corresponding values as text. 
+    //     foreach($_SESSION as $key => $value ){
+    //         if (in_array($key."_err", array_keys($_SESSION)) && $_SESSION[$key."_err"] != null ) { // checks eg for "name" there is "name_err" in Session object
+    //             // if current key (like "name") has his error message "name_err", then there is no need to mark "name" green.
+    //             // do nothing to that $key, will have to add error css to "name_err" on her iteration later.
+    //         } else {
+    //             if(str_contains($key, "_err") ){
+    //                 self::add_css_error($key);    // error messages change their css 
+    //             } else {
+    //                 self::add_css_complete($key);  // if ther is no error, message is not displayed, but field changes its appearance.
+    //             };
+
+    //         }
+    //     }
+        
+    // } 
 
     static public function show_server_messages(){
         if(array_key_exists("DB_updated",$_SESSION)){
@@ -36,28 +68,11 @@ class Dealing_with_form_errors {
             global $server_message_err;
             $server_message_err = $_SESSION["DB_error"];    
         }
-        session_destroy(); // this is necessary to empty the session and allow user to enter a new message. //even there is an error?
-        session_start(); 
+        // session_destroy(); // this is necessary to empty the session and allow user to enter a new message. //even there is an error?
+        // session_start(); 
     }
 
-    static public function apply_additional_css(){
-        if(count($_SESSION)>0){
-            // print_r($_SESSION); // session contains keys like "name" and "name_err" and values with text. 
-            foreach($_SESSION as $key => $value ){
-                if (in_array($key."_err", array_keys($_SESSION)) ) { // checks if there is eg "name" and "name_err" in Session object
-                    // if current key (like "name") has his error message "name_err", then there is no need to mark "name" green.
-                    // do nothing to that $key, will have to add error css to "name_err" on her iteration later.
-                } else {
-                    if(str_contains($key, "_err") ){
-                        self::add_css_error($key);    // error messages change their css 
-                    } else {
-                        self::add_css_complete($key);  // if ther is no error, message is not displayed, but field changes its appearance.
-                    };
-    
-                }
-            }
-        }
-    } 
+
     
     static public function add_css_error($field){
         echo "<style type='text/css'>

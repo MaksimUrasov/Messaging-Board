@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 class View {
 
     function __construct(){
