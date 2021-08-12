@@ -16,9 +16,7 @@ class View {
     }
 
 
-    // 1) this piece of code is needed when a webpage is loading for the first time, no errors or previous inputs
-
-    public function load_html(){
+       public function load_html(){
         require_once "header.php"; 
 
         require_once "html_body.php";
@@ -39,22 +37,16 @@ class View {
 
     
 
-
-    // 2) code below is necessary when the website is loaded not the first time: form has been submitted, but may contain errors.
     
     public function show_server_message_ok(){
         if(array_key_exists("DB_updated",$_SESSION)){
             echo $_SESSION["DB_updated"];   
-            // global $server_message_ok;
-            // $server_message_ok = $_SESSION["DB_updated"]; 
         }
 
     }      
     public function show_server_message_err(){
         if(array_key_exists("DB_error",$_SESSION)){
-            echo $_SESSION["DB_error"];
-            // global $server_message_err;
-            // $server_message_err = $_SESSION["DB_error"];    
+            echo $_SESSION["DB_error"];  
         }
 
     }   
@@ -90,12 +82,11 @@ class View {
             border-color:green;
         }   
         </style>"; //disabled="disabled" can not be used here, as it prevents form data to be sent on later stage.
-                    // in JS I have used readOnly = true;
+                    // in JS I have used "disabled"= true, because info is being sent not via POST;
     }
     
 
 
-    // 3) Below is the code that has to be done either way - load all messages, including the new message if it has been saved
 
     public function download_old_messages(){
         // global $table_name, $number_of_posts_per_page, $calculated_offset;
@@ -149,7 +140,7 @@ class View {
 
 
 
-//a class for one old message:
+//a class for one old message: (am not sure how to include it into View object)
 class Old_message {
 
     public function __construct($email, $name, $birth_date, $message) {

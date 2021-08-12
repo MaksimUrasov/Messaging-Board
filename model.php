@@ -11,7 +11,6 @@ class Model {
         $this->table_name = Connect_to_db_singletone_modified::$table_name;
         $this->information_to_client_message_saved = "Your message has been saved. Thank you!"; 
         $this->information_to_client_message_not_saved ="Saving to DB has failed";
-        // $first_name = $last_name = $birth = $email = $message = "";  have to declare them
     }
 
     public function proceed_the_data($indexOne_ajaxZero){
@@ -180,11 +179,6 @@ class Model {
 
     public function send_info_to_DB($object){
     
-        
-        // $name = $object->name;
-        // $birth = $object->birth;
-        // $email = $object->email;
-        // $message = $object->message;
         // insert row into DB table
         try {
                

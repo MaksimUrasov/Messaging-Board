@@ -10,10 +10,8 @@ class Controller {
   public function __construct($view, $model) {
     $this->view = $view;
     $this->model = $model;
-    // $this->model = $model;
     $this->check_who_triggered_me();
-    
-
+  
   }
 
 
