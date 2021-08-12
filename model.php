@@ -22,55 +22,54 @@ class Model {
  
 
         if ($indexOne_ajaxZero) {// true means info came from index.php, then we have to take POST data:
-            $validation_result = $this->validate_input($_POST["first_name"],$_POST["last_name"],$_POST["birth"],$_POST["email"],$_POST["message"]);
+            $validation_result_object = $this->validate_input($_POST["first_name"],$_POST["last_name"],$_POST["birth"],$_POST["email"],$_POST["message"]);
 
-            if($validation_result[0]){// if there are some errors, have to save each POST value to $_SESSION to be shown again on index.php page and return to index.php 
-                $this->save_info_to_session($validation_result);
+            if($validation_result_object->contains_errors){// if there are some errors, have to save each POST value to $_SESSION to be shown again on index.php page and return to index.php 
+                $this->save_info_to_session($validation_result_object);
           
             } else {//if there are no errors, wll run send_info_to_DB
                 
                 // I can not prepare data before, f.e. on data validation step, because if the data contains error, it has to be returned for correction in the same state, not prepared for DB.
-                $prepared_data_array = $this->prepare_data_for_DB($validation_result[1][0],$validation_result[1][1],$validation_result[1][2],$validation_result[1][3],$validation_result[1][4]);
-                $sending_to_DB_result = $this->send_info_to_DB($prepared_data_array); // this function not only saves to DB, but as confirmation also returns an array.
+                $prepared_data_object = $this->prepare_data_for_DB($validation_result_object);
+                $sending_to_DB_result = $this->send_info_to_DB($prepared_data_object); // this function not only saves to DB, but as confirmation also returns an object.
                 var_dump( $sending_to_DB_result);
 
-                if($sending_to_DB_result[0]){ 
+                if($sending_to_DB_result->success_or_not){ 
                     //as long as we redirect, have to save messages to Session:
-                    $_SESSION['DB_updated'] = $sending_to_DB_result[1];
+                    $_SESSION['DB_updated'] = $sending_to_DB_result->text_message;
                     echo $_SESSION['DB_updated'];
                 }else{
-                    $_SESSION['DB_error'] = $sending_to_DB_result[1] . "<br>" . "Request: ". $sending_to_DB_result[2] . "<br>" . $sending_to_DB_result[3];
+                    $_SESSION['DB_error'] = $sending_to_DB_result->text_message . "<br>" . "Request: ". $sending_to_DB_result->sql . "<br>" . $sending_to_DB_result->error_message;
                     echo $_SESSION['DB_error'];
                     
                 };
             }
-          
+
             header("Location: index.php");
             exit();
 
         } else {//  info was sent to me by AJAX in JSON format, so lets use it!
             $data_from_JSON = json_decode(file_get_contents("php://input"));
-            $validation_result = $this->validate_input($data_from_JSON->first_name,$data_from_JSON->last_name,$data_from_JSON->birth,$data_from_JSON->email,$data_from_JSON->message);
+            $validation_result_object = $this->validate_input($data_from_JSON->first_name,$data_from_JSON->last_name,$data_from_JSON->birth,$data_from_JSON->email,$data_from_JSON->message);
       
-            if($validation_result[0]){
+            if($validation_result_object->contains_errors){
               echo "That is very weird, but seems you have passed the wrong data in input fields. PHP input validator has found some mistakes.
               Try to refresh a page and resubmit a form. <br> Values and Errors: ";
-              echo json_encode($validation_result[1],$validation_result[2]);
+              echo json_encode($validation_result_object);
 
               // var_dump($_SESSION);
             } else {
                 
-              $prepared_data_array = $this->prepare_data_for_DB($validation_result[1][0],$validation_result[1][1],$validation_result[1][2],$validation_result[1][3],$validation_result[1][4]);
-              $sending_to_DB_result = $this->send_info_to_DB($prepared_data_array); // this function not only saves to DB, but as confirmation also returns an array.
+              $prepared_data_object = $this->prepare_data_for_DB($validation_result_object);
+              $sending_to_DB_result = $this->send_info_to_DB($prepared_data_object); // this function not only saves to DB, but as confirmation also returns an object.
       
               echo json_encode($sending_to_DB_result);
             };
             // there is no need to redirect back to index.php
         }
     }
-    
-    
 
+    
 
     public function validate_input($fn, $ln, $b, $e, $m){ // JS makes same validation in browser, but it is better to recheck data on server      
   
@@ -79,10 +78,13 @@ class Model {
         $birth = $this->test_input($b); // we save birth date to DB, exact age of customer will be calculated on loading the message.
         $email = $this->test_input($e);
         $message = $this->test_input($m);
+
+        $first_name_err = $last_name_err = $birth_err = $email_err = $message_err = "";
+
         $there_is_an_error= false;
 
-        $errors = array();
-        $validated_messages = array($first_name, $last_name, $birth, $email, $message);
+        // $errors = array();
+        // $validated_messages = array($first_name, $last_name, $birth, $email, $message);
         
 
         if(!preg_match("/^[a-zA-Z-' ]*$/",$first_name)){
@@ -121,7 +123,22 @@ class Model {
             $there_is_an_error= true;
         };
 
-        return array($there_is_an_error, $validated_messages, $errors);
+        $result = new stdClass();
+        $result->contains_errors = $there_is_an_error;
+
+        $result->first_name = $first_name; 
+        $result->last_name = $last_name;  
+        $result->birth = $birth;
+        $result->email = $email;
+        $result->message = $message;
+
+        $result->first_name_err = $first_name_err; 
+        $result->last_name_err = $last_name_err;
+        $result->birth_err = $birth_err;
+        $result->email_err = $email_err;
+        $result->message_err = $message_err;
+        
+        return $result;
     }
 
     
@@ -134,36 +151,46 @@ class Model {
         return $data;
     }
 
-    public function save_info_to_session($validation_result){
-        $_SESSION['first_name']= $validation_result[1][0]; 
-        $_SESSION['last_name']= $validation_result[1][1];  
-        $_SESSION['birth']= $validation_result[1][2];
-        $_SESSION['email']= $validation_result[1][3];
-        $_SESSION['message']= $validation_result[1][4];
+    public function save_info_to_session($validation_result_object){
 
-        $_SESSION['first_name_err'] = $validation_result[2][0]; // Session will contain empty keys if there are no errors
-        $_SESSION['last_name_err'] = $validation_result[2][1];
-        $_SESSION['birth_err'] = $validation_result[2][2];
-        $_SESSION['email_err'] = $validation_result[2][3];
-        $_SESSION['message_err'] = $validation_result[2][4];
+        // $_SESSION['first_name']= $validation_result_object['first_name']; 
+        // $_SESSION['last_name']= $validation_result_object['last_name'];  
+        // $_SESSION['birth']= $validation_result_object['birth'];
+        // $_SESSION['email']= $validation_result_object['email'];
+        // $_SESSION['message']= $validation_result_object['message'];
+
+        // $_SESSION['first_name_err'] = $validation_result_object['first_name_err']; // Session will contain empty keys if there are no errors
+        // $_SESSION['last_name_err'] = $validation_result_object['last_name_err'];
+        // $_SESSION['birth_err'] = $validation_result_object['birth_err'];
+        // $_SESSION['email_err'] = $validation_result_object['email_err'];
+        // $_SESSION['message_err'] = $validation_result_object['message_err'];
+
+        foreach ($validation_result_object as $key => $value) {
+            $_SESSION[$key]= $value;
+        }
+
+
     }
 
 
-    public function prepare_data_for_DB($fn, $ln, $b, $e, $m){
-        $name = $fn . " " . $ln;
-        $birth = $b;
-        $email = $e ?: "NULL"; // to save text "NULL" to DB on later stage
-        $message = $m;
-        return array($name, $birth, $email, $message);
+    public function prepare_data_for_DB($object){
+        $result = new stdClass();
+
+        $result->name = $object->first_name . " " . $object->last_name;
+        $result->birth = $object->birth;
+        $result->email = $object->email ?: "NULL"; // to save text "NULL" to DB on later stage
+        $result->message = $object->message;
+
+        return $result;
     }
 
-    public function send_info_to_DB($data_array){
+    public function send_info_to_DB($object){
     
         
-        $name = $data_array[0];
-        $birth = $data_array[1];
-        $email = $data_array[2];
-        $message = $data_array[3];
+        // $name = $object->name;
+        // $birth = $object->birth;
+        // $email = $object->email;
+        // $message = $object->message;
         // insert row into DB table
         try {
                
@@ -173,14 +200,26 @@ class Model {
             // Connections_to_db::db_insert($sql,$name,$birth,$email,$message);
     
             $connection_object = new Connections_to_db;
-            $connection_object->db_insert($sql,$name,$birth,$email,$message);
+            $connection_object->db_insert($sql,$object->name,$object->birth,$object->email,$object->message);
             
-            $success = true; 
-            return array($success, $this->information_to_client_message_saved); // this array will be visible in console log and JS will look for phraze "message saved to DB".
-    
+            $result_object = new stdClass();
+            $result_object->success_or_not = true;
+            $result_object->text_message = $this->information_to_client_message_saved;
+            
+            return $result_object; // this object will be visible in console log
+
         } catch(PDOException $e) {
-            $success = false; 
-            return array($success, $this->information_to_client_message_not_saved,  $sql, $e->getMessage());// this array will be visible in console log
+                        
+            $result_object = new stdClass();
+            $result_object->success_or_not = false;
+            $result_object->text_message = $this->information_to_client_message_saved;
+            $result_object->sql = $sql;
+            $result_object->error_message = $e->getMessage();
+            
+            return $result_object; // this object will be visible in console log
+
+            
+
         }
         
         //echo "message sent to DB";

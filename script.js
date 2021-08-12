@@ -317,10 +317,11 @@ function Actions(){
                     if (this.readyState == 4 && this.status == 200) {
                         
                         try {// if there are errors, they will be saved in JSON message too
+                            console.log("Here is unparsed JSON: " + this.responseText)
                             let response = JSON.parse(this.responseText);  
-                            // let response = this.responseText;  
-                            if (response[0]) {// this is the case when server responds "1"- which means "am fine, your message saved"
-                                server_success_message.innerHTML = response[1]
+                            
+                            if (response["success_or_not"]) {// this is the case when server responds "1"- which means "am fine, your message saved"
+                                server_success_message.innerHTML = response["text_message"]
                                 removeOldMessageAndAddNew(firstName,lastName, birthDate, eMail, msg)
                             removeInputValues();
                             console.log(response);
