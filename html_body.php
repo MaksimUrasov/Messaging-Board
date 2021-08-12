@@ -10,7 +10,7 @@
             <br>
         </noscript>
         
-        <form  method='post' action='/run_button_press.php' onsubmit='controller.action()' >   
+        <form  method='post' action='/run_button_press.php' onsubmit='runApp()' >   
             
             <div class='error_message first_name_err'>* First name <?php $this->get_session_value('first_name_err')?></div>
             <input type='text' class='input first_name' name='first_name' value='<?php $this->get_session_value('first_name')?>' placeholder='First name'   required>

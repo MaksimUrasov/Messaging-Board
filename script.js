@@ -10,11 +10,7 @@ class Model {
 
 
     validateInput(firstName,lastName,birthDate,eMail,msg){
-        result = {};
-        // inputsOk = {};
-        // inputsWithErrors = {}; //have to null them, to start ower after resubmitting data
-
-        // result.containsErrors = false;
+        let result = {};
 
         result.first_name = firstName; // here key names shall be same as Form classes, to use them later to change appearance
         result.last_name = lastName;
@@ -22,73 +18,43 @@ class Model {
         result.email = eMail;
         result.message = msg;
     
-        // result.firstNameErr = "";
-        // result.lastNameErr = "";
-        // result.birthDateErr  = "";
-        // result.eMailErr = "";
-        // result.msgErr = "";
+
 
         if (!/^[a-zA-Z-' ]*$/.test(firstName)) {
             result.first_name_err = "First name shall contain only letters and whitespaces.";
-            // result.containsErrors = true;
-        }else{
-            // inputsOk.push("first_name");
-            // console.log(inputsOk);
         }
 
         if (!/^[a-zA-Z-' ]*$/.test(lastName)) {
             result.last_name_err = "Last name shall contain only letters and whitespaces.";
-            // result.containsErrors = true;
-        }else{
-            // inputsOk.push("last_name");
-            // console.log(inputsOk);
         }
 
         
-        if (Date.parse(birthDate) > today) {
+        if (Date.parse(birthDate) > this.today) {
             result.birth_err = "Your birth date can not be in the future!"
-            // result.containsErrors = true;
-        }else{
-            // inputsOk.push("birth"); 
-            // console.log(inputsOk);
         }
 
         if ( eMail!="" &&  !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(eMail)) {
             result.email_err = "Seems there is a typing error, such email is not valid."
-            // result.containsErrors = true;
-        }else{
-            // inputsOk.push("email"); 
-            // console.log(inputsOk);
         }
 
         if (msg.length<3) {
             result.message_err ="Message shall contain at least 3 characters";
-            // result.containsErrors = true;
         } else if(msg.length>500){
-            result.message_err = "Message shall contain less than 500 characters";  
-            // result.containsErrors = true;      
-        } else {
-            // inputsOk.push("message"); 
-            // console.log(inputsOk);
+            result.message_err = "Message shall contain less than 500 characters";        
         }
-
         return result;
-
     }
 
     saveToDB(givenObject) { // object shall contain only data to save, no errors
 
-        firstName = givenObject.first_name;
-        lastName = givenObject.last_name;
-        birthDate = givenObject.birth;
-        eMail = givenObject.email;
-        msg = givenObject.message;
+        let firstName = givenObject.first_name;
+        let lastName = givenObject.last_name;
+        let birthDate = givenObject.birth;
+        let eMail = givenObject.email;
+        let msg = givenObject.message;
+        let that = this;
 
         const xhttp = new XMLHttpRequest();
-        // xhttp.onload = function() {
-        //     // here I will parse the data
-        //   //document.getElementById("txtHint").innerHTML = this.responseText;
-        // }
         xhttp.open("POST", "/run_button_press.php", true);
         xhttp.setRequestHeader("Content-Type", "application/json, charset=utf-8");
         xhttp.onload = function() {
@@ -99,38 +65,41 @@ class Model {
 
                     if (response["success_or_not"]) {// "1"- means "am fine, your message saved"
 
-                        this.view.showServerMessages(response["text_message"], null); 
+                        that.view.showServerMessages(response["text_message"], null); 
                         console.log(response);
 
-                        this.view.removeOldMessageAndAddNew(firstName,lastName, birthDate, eMail, msg)
-                        this.view.removeInputValues(givenObject);
+                        that.view.removeOldMessageAndAddNew(firstName,lastName, birthDate, eMail, msg);
+                        that.view.removeInputValues(givenObject);
 
 
-                    }  // server responded that message not saved
-                    this.view.showServerMessages(null,response["text_message"]);
-                    console.log(response);
+                    } else { // server responded that message not saved
+                        that.view.showServerMessages(null,response["text_message"]);
+                        console.log(response);
+                    }  
+                    
     
 
                 } catch (error) {  // JSON could not be parsed correctly
-                    this.view.showServerMessages(null,`Something went wrong :( Message may be not saved. JSON not parsed, error: ${error}`);
+                    that.view.showServerMessages(null,`Something went wrong :( Message may be not saved. Catched error: ${error}`);
                     console.log("Here is unparsed JSON: " + this.responseText)                           
                 }
                      
             
             } else { // connection to server has failed
-                this.view.showServerMessages(null,"Connection to server has failed");
+                that.view.showServerMessages(null,"Connection to server has failed");
                 console.log('Error Code: '+ xhttp.status);
                 console.log('Error Message: '+ xhttp.statusText);
             }
 
             // despite there may be errorrs, this piece of code shall be executed anyway:
-            hideOrShow("lds-facebook","button");
-            restoreInputErrorMessageText();
-            hideOrShow(null, "mandatory_notice");
-            for (let i = 0; i < inputsOk.length; i++) {
-                let classNameOfInput = inputsOk[i];
-                removeCssGreen(classNameOfInput);                            
+            that.view.hideOrShow("lds-facebook","button");
+            that.view.noteTextToNormal();
+            that.view.hideOrShow(null, "mandatory_notice");
+            for (let i = 0; i < Object.keys(givenObject).length; i++) {
+                let className = Object.keys(givenObject)[i];
+                that.view.valueToNormal(className);                            
             }
+
 
         };
         let messageObject = {first_name:firstName,last_name:lastName,birth:birthDate,email:eMail,message:msg}; // must be JS object
@@ -149,74 +118,70 @@ class View {
         this.emailErrNode = document.getElementsByClassName("email_err")[0];
         this.msgErrNode = document.getElementsByClassName("message_err")[0];
 
-        // this.inputsOk = []; // here I will save info about correct inputs
-        // this.inputsWithErrors = []; // here I will save all validation errors.
-
         // Below variables are necessary to restore these text values after successfull submit:
-        this.firstNameErrText =  firstNameErrNode.innerText;
-        this.lastNameErrText =  lastNameErrNode.innerText;
-        this.birthDateErrText =  birthDateErrNode.innerText;
-        this.emailErrText =  emailErrNode.innerText;
-        this.msgErrText =  msgErrNode.innerText;
+        this.firstNameErrText =  this.firstNameErrNode.innerText;
+        this.lastNameErrText =  this.lastNameErrNode.innerText;
+        this.birthDateErrText =  this.birthDateErrNode.innerText;
+        this.emailErrText =  this.emailErrNode.innerText;
+        this.msgErrText =  this.msgErrNode.innerText;
 
-        // this.today = new Date();
+        this.today = new Date();
 
         this.serverSuccessMessageNode = document.getElementById("server_success_message") 
         this.serverErrorMessageNode = document.getElementById("server_error_message") 
     }    
 
     cnangeNotesAndInputsAppearance(validatedObject){
-        //here we have 3 options: 
-        // there were no errors and now no errors - fine, lets save info to DB
-        // there were no errors but now some appeared - have to mark new errors and confirm good inputs
-        // there were errors and now no errors  - have to remove error messages and then save info to DB
-        // there were errors and now still have some errors - have to mark new errors and confirm good inputs
 
         for (const [key, value] of Object.entries(validatedObject)) {
+            // console.log(Object.entries(validatedObject));
                 // Input fields have 2 statuses: normal and green. 
                 // Notes have 3 statuses: normal, red with error message, accepted.
-            if (key == Object.keys(validatedObject).includes(key+"_err") )  { // e.g. key is "name" and there is nameErr in the array, then no need to mark NAME input green
+            if (Object.keys(validatedObject).toString().includes(key+"_err"))  { // e.g. key is "name" and there is nameErr in the array, then no need to mark NAME input green
                 continue
 
-            } else if (key != Object.keys(validatedObject).includes(key+"_err") ) { //there is no corresponding errors to that input field  
+            } else if ( !Object.keys(validatedObject).toString().includes(key+"_err") && !key.includes("_err") ) { //there is no corresponding errors to that input field  
                 this.valueToGreen(key); //and mark all good inputs green 
                 this.noteToAccepted(key+"_err") //and note changed to "accepted" instead of error message.
 
             } else if (key.includes("_err")) {  
                 this.noteToRed(key, value);
             }
-             
+            
         }
     }
 
 
-    valueToGreen(classToChange){
+    valueToGreen(classToChange){ // value: phase 1
         let node = document.getElementsByClassName(classToChange)[0];
         node.setAttribute("disabled", true); // I can not add this property via css class, so have to add it directly to html node.
         node.classList.add("green");
     }
     
-    valueToNormal(classToChange){
+    valueToNormal(classToChange){  // value: phase 2
         let node = document.getElementsByClassName(classToChange)[0];
         node.removeAttribute("disabled");
         node.classList.remove("green");
     }
     
-    noteToRed(classToChange,newErrorNote){
+    noteToRed(classToChange,newErrorNote){  // note: phase 1
         let node = document.getElementsByClassName(classToChange)[0];
         node.classList.add("red");
         node.textContent = newErrorNote;
     }
     
-    noteToAccepted(classToChange){
+    noteToAccepted(classToChange){  // note: phase 2
         let node = document.getElementsByClassName(classToChange)[0];
         node.classList.remove("red");
         node.textContent = "Accepted";
     }
 
-    noteToNormal(classToChange, newMessage){
-        let node = document.getElementsByClassName(classToChange)[0];
-        node.textContent = newMessage;
+    noteTextToNormal(){  // note: phase 3
+        this.firstNameErrNode.innerText = this.firstNameErrText  
+        this.lastNameErrNode.innerText = this.lastNameErrText 
+        this.birthDateErrNode.innerText =  this.birthDateErrText 
+        this.emailErrNode.innerText = this.emailErrText 
+        this.msgErrNode.innerText = this.msgErrText 
     }
     
     hideOrShow(classToHide, classToShow) {
@@ -230,15 +195,7 @@ class View {
         }
     }
     
-    
-    restoreInputErrorMessageText(){
-        firstNameErrNode.innerText = firstNameErrText
-        lastNameErrNode.innerText = lastNameErrText
-        birthDateErrNode.innerText = birthDateErrText
-        emailErrNode.innerText = emailErrText
-        msgErrNode.innerText = msgErrText
-    }
-    
+        
     removeInputValues(givenObject){
         for (let i = 0; i < Object.keys(givenObject).length; i++) {
             let classNameOfInput = Object.keys(givenObject)[i];
@@ -255,40 +212,32 @@ class View {
 
     calculateAge(birthDate) {
         
-        this.resultInMiliseconds = today - new Date(birthDate)
+        this.resultInMiliseconds = this.today - new Date(birthDate)
         // let result = (today - new Date(birthDate) ) ;
-        return new Date(resultInMiliseconds).getFullYear()-1970;// convert miliseconds to date after 1970 (eg 1 year will be 1971-1970)
+        return new Date(this.resultInMiliseconds).getFullYear()-1970;// convert miliseconds to date after 1970 (eg 1 year will be 1971-1970)
     }
 
     showServerMessages(goodMessage, badMessage){
         this.serverSuccessMessageNode.innerHTML = goodMessage;
-        this.serverErrorMessageNode = badMessage;
+        this.serverErrorMessageNode.innerHTML = badMessage;
     }
 
 
     removeOldMessageAndAddNew(firstName,lastName, birthDate, eMail, msg){
 
-        // let oldMessagesNodesArray = ;
         let containerNodes = document.getElementsByClassName("container_for_one_old_message");
-        // console.log(containerNodes);
         var lastMessageContainerNode = containerNodes[containerNodes.length-1];
-        // console.log(lastMessageContainerNode);
-        //  let firstMessageContainerNode = oldMessagesNodesArray[0]; 
 
         //prepare a place for a new message and create a container for that message:
         let parentNode =  document.getElementById("container_for_old_messages");
-        let referenceNode = document.getElementsByClassName("container_for_one_old_message")[0];
+        let referenceNode = containerNodes[0];
         let newMessageNode = lastMessageContainerNode.cloneNode(true);// does not matter what message do we copy, we will change its values later.
-        // let insertedMessageNode = parentNode.insertBefore(newMessageNode, referenceNode);
         parentNode.insertBefore(newMessageNode, referenceNode);
-
 
         //then add fresh input values to that newly created message container (which is now a clone of the last message)
         document.getElementsByClassName("old_name")[0].innerHTML = this.createName(firstName,lastName,eMail);
         document.getElementsByClassName("old_age")[0].innerHTML = `${this.calculateAge(birthDate)} years.`;
         document.getElementsByClassName("old_message")[0].innerHTML = msg;
-
-        
 
         // then hide the last message (hide does not work because user can post several messages, so each time the last has to be deleted)
         lastMessageContainerNode.remove();
@@ -300,23 +249,13 @@ class Controller {
         this.model = model
         this.view = view
         this.today = new Date();
-        takeOverControl() //First, JS has to take control over the form if JS is enabled
-    };
-
-
-    takeOverControl() {
-        document.getElementsByTagName("form")[0].removeAttribute("action"); // this one says: "Hey FORM, Captain JS is here, so do not process
-        // the action, give control to me!"
+        document.getElementsByTagName("form")[0].setAttribute("action", "javascript:void(0);") 
+        // this one says: "Hey FORM, Captain JS is here, so do not process the action, give control to me!"
         // only removing the "action" attribute from a form was not good, because that caused page reload after button press in Safari. 
-        // So had to add below:
-        document.getElementsByTagName("form")[0].setAttribute("action", "javascript:void(0);")
-        console.log("I am ready to continue, but this function has to be simplified");
-    }
+    };
 
     action(){   // this function is triggered when the button is pressed
   
-
-    
         let firstName = document.getElementsByName("first_name")[0].value; 
         let lastName = document.getElementsByName("last_name")[0].value;
         let birthDate = document.getElementsByName("birth")[0].value;
@@ -330,11 +269,9 @@ class Controller {
         // I could use AJAX to use same php script, but I think better to do the same validation in browser.
         
         let validationResultObject = this.model.validateInput(firstName,lastName,birthDate,eMail,msg);
-        if (Object.keys(validationResultObject) == "_err") { //if there are some fresh errors on input
-            this.view.cnangeNotesAndInputsAppearance(validationResultObject);
-        } else { // if there are no errors or all the errors are fixed (but old errors may be still on the screen)
-            this.view.cnangeNotesAndInputsAppearance(validationResultObject); // amend all errors that may be there to accepted.
-            
+        this.view.cnangeNotesAndInputsAppearance(validationResultObject);
+
+        if (!Object.keys(validationResultObject).toString().includes("_err") ) { // if there are no errors or all the errors are fixed 
             // then hide button and launch spinner: // better to add class, as it can be removed
             this.view.hideOrShow("button", "lds-facebook");
             this.view.hideOrShow("mandatory_notice", null);
@@ -350,9 +287,12 @@ class Controller {
 
 const view = new View();
 const model = new Model(view);
-const app = new Controller(model,view);
+const controller = new Controller(model,view);
 
-
+function runApp(){  // i could not call controller.action() in html, because it is before creating a new class instance. 
+                    //so used that simple function to reroute.
+    controller.action()
+}
 
 
 
@@ -426,7 +366,7 @@ const app = new Controller(model,view);
 // }
 
 
-// function restoreInputErrorMessageText(){
+// function noteTextToNormal(){
 //     firstNameErrNode.innerText = firstNameErrText
 //     lastNameErrNode.innerText = lastNameErrText
 //     birthDateErrNode.innerText = birthDateErrText
@@ -646,7 +586,7 @@ const app = new Controller(model,view);
 
 
 //                         hideOrShow("lds-facebook","button");
-//                         restoreInputErrorMessageText();
+//                         noteTextToNormal();
 //                         hideOrShow(null, "mandatory_notice");
 //                         for (let i = 0; i < inputsOk.length; i++) {
 //                             let classNameOfInput = inputsOk[i];
@@ -680,5 +620,5 @@ const app = new Controller(model,view);
     
 // };
 
-// // Actions()
+
 
