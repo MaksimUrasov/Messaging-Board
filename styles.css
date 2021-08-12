@@ -1,6 +1,7 @@
 :root {
     --dark_brown: rgb(90, 56, 6);
-    --light_brown: #fff3e6
+    --light_brown: #fff3e6;
+    --normal_brown: #fde6cb;
     /* --white: #ffffff; */
   }
 
@@ -11,10 +12,11 @@ body {
 }
 
 .content {
-    background-color: bisque;
+    background-color: var(--normal_brown);
     width: 300px;
-    margin: auto;
-    padding: 3vw 3vw 3vw 3vw;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0.1vw 3vw 3vw 3vw;
 }
 
 p{

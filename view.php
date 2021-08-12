@@ -13,11 +13,21 @@ class View {
         $this->calculated_offset = $this->page_to_show * $this->number_of_posts_per_page - $this->number_of_posts_per_page;
         $this->amount_of_entries = $this->download_amount_of_old_messages();
         $this->amount_of_pages = ceil($this->amount_of_entries / $this->number_of_posts_per_page);
-        $this->apply_additional_css();
     }
 
 
     // 1) this piece of code is needed when a webpage is loading for the first time, no errors or previous inputs
+
+    public function load_html(){
+        require_once "header.php"; 
+
+        require_once "html_body.php";
+        echo "</html>";
+
+        $this->apply_additional_css();
+
+    }
+    
 
     public function get_session_value($key){ //this function is needed for each form input value.
         if(array_key_exists($key,$_SESSION)){
@@ -34,7 +44,7 @@ class View {
     
     public function show_server_message_ok(){
         if(array_key_exists("DB_updated",$_SESSION)){
-            echo "<br>" . $_SESSION["DB_error"];   
+            echo $_SESSION["DB_updated"];   
             // global $server_message_ok;
             // $server_message_ok = $_SESSION["DB_updated"]; 
         }
@@ -42,7 +52,7 @@ class View {
     }      
     public function show_server_message_err(){
         if(array_key_exists("DB_error",$_SESSION)){
-            echo "<br>" . $_SESSION["DB_error"];
+            echo $_SESSION["DB_error"];
             // global $server_message_err;
             // $server_message_err = $_SESSION["DB_error"];    
         }

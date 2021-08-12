@@ -311,7 +311,7 @@ function Actions(){
                 //     // here I will parse the data
                 //   //document.getElementById("txtHint").innerHTML = this.responseText;
                 // }
-                xhttp.open("POST", "/button_pressed_logic.php", true);
+                xhttp.open("POST", "/run_button_press.php", true);
                 xhttp.setRequestHeader("Content-Type", "application/json, charset=utf-8");
                 xhttp.onload = function() {
                     if (this.readyState == 4 && this.status == 200) {
