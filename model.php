@@ -79,13 +79,7 @@ class Model {
         $email = $this->test_input($e);
         $message = $this->test_input($m);
 
-        $first_name_err = $last_name_err = $birth_err = $email_err = $message_err = "";
-
         $there_is_an_error= false;
-
-        // $errors = array();
-        // $validated_messages = array($first_name, $last_name, $birth, $email, $message);
-        
 
         if(!preg_match("/^[a-zA-Z-' ]*$/",$first_name)){
             $first_name_err =  "shall contain only letters and whitespaces."; 
@@ -132,11 +126,11 @@ class Model {
         $result->email = $email;
         $result->message = $message;
 
-        $result->first_name_err = $first_name_err; 
-        $result->last_name_err = $last_name_err;
-        $result->birth_err = $birth_err;
-        $result->email_err = $email_err;
-        $result->message_err = $message_err;
+        $result->first_name_err = $first_name_err ?? null; 
+        $result->last_name_err = $last_name_err ?? null;
+        $result->birth_err = $birth_err ?? null;
+        $result->email_err = $email_err ?? null;
+        $result->message_err = $message_err ?? null;
         
         return $result;
     }
