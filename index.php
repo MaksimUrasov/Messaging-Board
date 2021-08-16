@@ -1,11 +1,8 @@
 <?php
 
-require_once "view.php"; 
-require_once "model.php"; 
-require_once "controller.php"; 
-
-$view = new View();
-$model = new Model();
-$controller = new Controller($view,$model);
+require_once "app/run_index.php"; 
+// this file contains minimum information, as it will be in public folder. "run_index.php" shall be in another private folder "app".
 
 ?>
+
+

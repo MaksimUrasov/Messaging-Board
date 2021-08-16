@@ -7,6 +7,7 @@
 // I have added a form and a button to enter the table name. Therefore controller, view and model classes created.
 // as long as these MVC classes for this file are small, I leave them all in one file.
 
+require_once 'app/model/get_pdo.php';
 
 class View {
 
@@ -21,8 +22,8 @@ class View {
       <label for="tname">New table name:</label><br>
       <input type="text" id="tname" name="tname" value="A new awesome table"><br>
       <input type="submit" value="Create">
-      </form>
-      <p><br>Below there is an SQLSTATE error after submitting, I have left it as is so far as long as table name saves successfully.<p>';
+      </form>';
+      // <p><br>Below there is an SQLSTATE error after submitting, I have left it as is so far as long as table name saves successfully.<p>';
   }
   public function show_the_message($t){
     echo "Table $t created successfully";
@@ -34,6 +35,7 @@ class Model {
   private $view;
   function __construct($view) {
     $this->view = $view;
+    $this->pdo = Get_pdo::get_connection();
   }
   
 
@@ -51,11 +53,9 @@ class Model {
           message TEXT(500) COLLATE utf8_general_ci NOT NULL
           );";
           
-      $connection_object = new Connections_to_db;
-      $connection_object->db_create($sql);
+      $this->pdo->exec($sql); // use exec() because no results are returned
 
-      $this->view->show_the_message($clean_table_name);
-      
+      $this->view->show_the_message($clean_table_name);  
 
     } catch(PDOException $e) {
       echo $sql . "<br>" . $e->getMessage();
@@ -84,7 +84,7 @@ class Controller {
 
 }
 
-require_once 'manage_db.php';
+
 
 // ok, seems we have all we need, so below we run the file: 
 

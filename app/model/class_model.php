@@ -1,16 +1,20 @@
 <?php
-
+//Data validation and business rules can only be applied in one place - the Model.
+//SQL statements can only be generated and executed in one place 
 
 
 // connect to DB
-require_once 'manage_db.php';
+require_once 'app/model/get_pdo.php';
 
 class Model {
-
+   
     public function __construct(){
-        $this->table_name = Connect_to_db_singletone_modified::$table_name;
+        // $this->table_name = Get_pdo::$table_name;
+        // $this->pdo = Get_pdo::get_connection();
+        // $this->table_name = $this->pdo->get_table_name();
+        $this->table_name = "Posts3";
         $this->information_to_client_message_saved = "Your message has been saved. Thank you!"; 
-        $this->information_to_client_message_not_saved ="Saving to DB has failed";
+        $this->information_to_client_message_not_saved ="Saving to DB has failed";    
     }
 
     public function proceed_the_data($indexOne_ajaxZero){
@@ -184,12 +188,13 @@ class Model {
                
             $sql = "INSERT INTO $this->table_name (id, name, birth_date, email, message)
             VALUES (NULL, ?, ?, ?, ?)";
-    
-            // Connections_to_db::db_insert($sql,$name,$birth,$email,$message);
-    
-            $connection_object = new Connections_to_db;
-            $connection_object->db_insert($sql,$object->name,$object->birth,$object->email,$object->message);
+
+            $array_to_insert = array($object->name,$object->birth,$object->email,$object->message);
+            $result = $this->pdo->prepare($sql);
+            $result->execute($array_to_insert);
             
+
+            //prepare the output:
             $result_object = new stdClass();
             $result_object->success_or_not = true;
             $result_object->text_message = $this->information_to_client_message_saved;

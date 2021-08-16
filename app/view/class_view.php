@@ -1,30 +1,47 @@
 <?php
+//HTML or PDF output can only be generated and output in one place - the View.
 
 session_start();
 
-require_once 'manage_db.php'; // Connect_to_db_singletone_modified is needed here
+// require_once "app/view/html_body.php"; // iskeliau i virsu, bet taip nebeveikia, using $this when not in object context
+require_once 'app/model/get_pdo.php'; 
+require_once 'app/view/old_message.php'; 
+
+
 
 class View {
 
-    function __construct(){
-        $this->number_of_posts_per_page = 10;
-        $this->table_name = Connect_to_db_singletone_modified::$table_name; // this variable has to be in Model
-        $this->page_to_show = (array_key_exists("page",$_GET)) ?  intval($_GET["page"]) : 1 ;
-        $this->calculated_offset = $this->page_to_show * $this->number_of_posts_per_page - $this->number_of_posts_per_page;
+    function __construct($number_of_posts_per_page){  
+        $this->number_of_posts_per_page = $number_of_posts_per_page;  // O:sitas turetu buti iskeltas i constanta ir priskirta reiksme ten. 
+                                                // M: iskeliau ji i "$view = new View(10);", ar reikia iskelti kazkur kitur?
+        // $this->table_name = Get_pdo::$table_name; 
+        $this->pdo = Get_pdo::get_connection();
+        // $this->table_name = $this->pdo->get_table_name();
+        $this->table_name = "Posts3";
+        $this->page_to_show = $this->get_current_page() ; // kad cia nebutu logikos, iskeliau i atskira funkcija. Tik jau nebesigavo array function.
+        // $this->calculated_offset = $this->calculate_offset(); // kad cia nebutu logikos, iskeliau i atskira funkcija. Bet kaip ir auksciau, gal paprasciau
+                                                        // ta kintamaji gauti ten kur jo reikia ir nekurti atskiros funkcijos? Jis tik 1 karta bus reikalingas.
         $this->amount_of_entries = $this->download_amount_of_old_messages();
-        $this->amount_of_pages = ceil($this->amount_of_entries / $this->number_of_posts_per_page);
-    }
-
-
-       public function load_html(){
-        require_once "header.php"; 
-
-        require_once "html_body.php";
-        echo "</html>";
-
+        // $this->amount_of_pages = $this->calculate_amount_of_pages() // kad cia nebutu logikos, iskeliau i atskira funkcija. 
+        // Bet juokingai maza funkcija, tai geriau idejau logika ten kur jos reikia, i create_page_links().
         $this->apply_additional_css();
-
     }
+
+    private function get_current_page(){
+        if (array_key_exists("page",$_GET)) {
+           return intval($_GET["page"]);
+        } else {
+            return 1;
+        }
+    }
+    
+    // private function calculate_offset(){
+    //     return $this->page_to_show * $this->number_of_posts_per_page - $this->number_of_posts_per_page;
+    // }
+
+    // private function calculate_amount_of_pages(){
+    //     return ceil($this->amount_of_entries / $this->number_of_posts_per_page); 
+    // }
     
 
     public function get_session_value($key){ //this function is needed for each form input value.
@@ -35,7 +52,10 @@ class View {
         }
     }
 
-    
+    public function run_view_class(){
+        require_once "app/view/html_body.php";
+    }
+
 
     
     public function show_server_message_ok(){
@@ -89,14 +109,12 @@ class View {
 
 
     public function download_old_messages(){
-        // global $table_name, $number_of_posts_per_page, $calculated_offset;
         
         try {
+            $calculated_offset = $this->page_to_show * $this->number_of_posts_per_page - $this->number_of_posts_per_page;
 
-            $sql = "SELECT * FROM $this->table_name ORDER BY id DESC LIMIT $this->number_of_posts_per_page OFFSET $this->calculated_offset";
-
-            $connection_object = new Connections_to_db;
-            $result = $connection_object->db_select($sql);
+            $sql = "SELECT * FROM $this->table_name ORDER BY id DESC LIMIT $this->number_of_posts_per_page OFFSET $calculated_offset";
+            $result = $this->pdo->query($sql);
 
             foreach($result as $k=>$v) {
                 $old_message = new Old_message($v["email"],$v["name"],$v["birth_date"],$v["message"]);
@@ -112,8 +130,7 @@ class View {
         // global $table_name;
         try {
             $sql = "SELECT count(*) FROM $this->table_name";
-            $connection_object = new Connections_to_db;
-            $result = $connection_object->db_select($sql);
+            $result = $this->pdo->query($sql);
             $number_of_entries = $result->fetchColumn();
             return $number_of_entries;
         } catch(PDOException $e) {
@@ -124,7 +141,9 @@ class View {
     
     public function create_page_links(){
         
-        for ($i = 1; $i <= $this->amount_of_pages; $i++) {
+        $amount_of_pages = ceil($this->amount_of_entries / $this->number_of_posts_per_page); 
+
+        for ($i = 1; $i <= $amount_of_pages; $i++) {
 
             if($i == $this->page_to_show) { // if we are on a page one, there shall be no link to itself.
                 echo "<p>$i</p>"; 
@@ -138,44 +157,4 @@ class View {
 
 }
 
-
-
-//a class for one old message: (am not sure how to include it into View object)
-class Old_message {
-
-    public function __construct($email, $name, $birth_date, $message) {
-        $this->generated_email = ($email !== "NULL") ? $email : "" ;
-        $this->generated_name = $this->generate_link_to_email($this->generated_email,$name);
-        $this->generated_age =  $this->convert_date_to_years_old($birth_date);
-        $this->generated_message = ucfirst($message);  // have added ucfirst built in function to capitalize the first letter, for better appearance.
-        $this->genereate_an_html();
-    }
-
-    public function generate_link_to_email($email,$name){
-        if ($email){
-            return "<a href='mailto:$email'>$name</a>";
-        } else {
-            return $name;
-        }
-    }
-
-    public function convert_date_to_years_old($b_date){
-        $dob = new DateTime($b_date);
-        $now = new DateTime();
-        $age = $now->diff($dob);
-        return $age->format('%y');
-    }
-
-    public function genereate_an_html(){
-        echo "<div class='container_for_one_old_message'>
-        <div class='name_and_year_container'>
-            <p class='old_name'>" . $this->generated_name . ",</p>  
-            <p class='old_age'>" . $this->generated_age . " years.</p> 
-        </div>
-        <p class='old_message'>" . $this->generated_message . "</p> 
-        </div>"; 
-    }
-
-
-};
 

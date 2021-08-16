@@ -289,7 +289,7 @@ const view = new View();
 const model = new Model(view);
 const controller = new Controller(model,view);
 
-function runApp(){  // i could not call controller.action() in html, because it is before creating a new class instance. 
+function runApp(){  // i could not call controller.action() in html, because html is before creating a new JS class instance. 
                     //so used that simple function to reroute.
     controller.action()
 }
